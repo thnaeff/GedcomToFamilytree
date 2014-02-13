@@ -16,18 +16,45 @@
  */
 package ch.thn.gedcom.familytree;
 
+
+import java.util.Comparator;
+import java.util.LinkedList;
+
 import ch.thn.gedcom.creator.GedcomCreatorFamily;
 import ch.thn.gedcom.familytree.printer.FamilyTreePrintBuilder;
 import ch.thn.gedcom.familytree.printer.FamilytreePrinter;
-import ch.thn.util.tree.printable.PrintableTreeNode;
-import ch.thn.util.tree.printable.printer.TreePrinter;
+import ch.thn.util.tree.TreeNodeException;
+import ch.thn.util.tree.printable.GenericPrintableTreeNode;
+import ch.thn.util.tree.printable.TreePrinter;
 
 /**
  *
  * @author Thomas Naeff (github.com/thnaeff)
  *
  */
-public class FamilyTreeNode extends PrintableTreeNode<String, GedcomToFamilytreeIndividual[]> {
+public class FamilyTreeNode 
+	extends GenericPrintableTreeNode<String, GedcomToFamilytreeIndividual[], FamilyTreeNode> {
+	
+	/**
+	 * 
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	protected FamilyTreeNode(String key, GedcomToFamilytreeIndividual[] value) {
+		super(key, value);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param parent
+	 * @param key
+	 * @param value
+	 */
+	protected FamilyTreeNode(FamilyTreeNode parent, String key, GedcomToFamilytreeIndividual[] value) {
+		super(parent, key, value);
+	}
 	
 	/**
 	 * 
@@ -36,14 +63,59 @@ public class FamilyTreeNode extends PrintableTreeNode<String, GedcomToFamilytree
 	 * @param parent1 The parent which is the child of the parents of this family
 	 * @param parent2 The partner of parent1
 	 */
-	public FamilyTreeNode(String key, GedcomToFamilytreeIndividual parent1, GedcomToFamilytreeIndividual parent2) {
+	public FamilyTreeNode(String key, GedcomToFamilytreeIndividual parent1, 
+			GedcomToFamilytreeIndividual parent2) {
 		super(key, new GedcomToFamilytreeIndividual[] {parent1, parent2});
 	}
 	
+	@Override
+	protected FamilyTreeNode nodeFactory(String key,
+			GedcomToFamilytreeIndividual[] value) {
+		return new FamilyTreeNode(key, value);
+	}
+
+
+	@Override
+	protected FamilyTreeNode nodeFactory(FamilyTreeNode parent, String key,
+			GedcomToFamilytreeIndividual[] value) {
+		return  new FamilyTreeNode(parent, key, value);
+	}
+
+
+	@Override
+	protected FamilyTreeNode getThis() {
+		return this;
+	}
 	
 	@Override
-	public boolean printNode(TreePrinter<String, GedcomToFamilytreeIndividual[], ?, ?> printer) {
-		
+	protected LinkedList<FamilyTreeNode> getChildNodes() {
+		return super.getChildNodes();
+	}
+	
+	@Override
+	protected FamilyTreeNode addChildNode(FamilyTreeNode childNode)
+			throws TreeNodeException {
+		return super.addChildNode(childNode);
+	}
+	
+	@Override
+	protected void sortChildNodesByValue(
+			Comparator<FamilyTreeNode> childValueSorter) {
+		super.sortChildNodesByValue(childValueSorter);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	public GedcomToFamilytreeIndividual[] getIndividuals() {
+		return super.getNodeValue();
+	}
+	
+	@Override
+	public boolean printNode(
+			TreePrinter<String, GedcomToFamilytreeIndividual[], ?, ?, ?> printer) {
 		FamilyTreePrintBuilder printBuilder = null;
 		
 		if (printer instanceof FamilytreePrinter) {
@@ -142,5 +214,6 @@ public class FamilyTreeNode extends PrintableTreeNode<String, GedcomToFamilytree
 		
 		return true;
 	}
+	
 
 }

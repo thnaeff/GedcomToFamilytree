@@ -25,14 +25,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ch.thn.gedcom.data.GedcomLine;
 import ch.thn.gedcom.data.GedcomNode;
 import ch.thn.gedcom.familytree.printer.FamilytreeCSVPrinter;
 import ch.thn.gedcom.familytree.printer.FamilytreeHTMLPrinter;
 import ch.thn.gedcom.familytree.printer.FamilytreeTextPrinter;
 import ch.thn.gedcom.store.GedcomStore;
 import ch.thn.util.tree.TreeNodeException;
-import ch.thn.util.tree.printable.PrintableTreeNode;
 
 /**
  *
@@ -61,7 +59,6 @@ public class GedcomToFamilytree {
 	private FamilytreeCSVPrinter csvPrinter = null;
 	private FamilytreeTextPrinter textPrinter = null;
 	private FamilytreeHTMLPrinter htmlPrinter = null;
-//	private HorizontalFamilytreeHTMLPrinter horizontalHtmlPrinter = null;
 	
 	
 	/**
@@ -109,12 +106,9 @@ public class GedcomToFamilytree {
 		
 		FamilyTree familyTree = new FamilyTree(treeTitle);
 		
-		if (treeTitle == null) {
-			familyTree.setInvisibleNode(true);
-		}
 		//Start building the tree by adding the first child
 		addChild(familyTree, individualId);
-				
+		
 		this.familyTree = familyTree;
 		
 		return familyTree;
@@ -125,7 +119,7 @@ public class GedcomToFamilytree {
 	 * 
 	 * @param comparator
 	 */
-	public void sortTree(Comparator<PrintableTreeNode<String, GedcomToFamilytreeIndividual[]>> comparator) {
+	public void sortTree(Comparator<FamilyTreeNode> comparator) {
 		sortChildren(familyTree.getChildNodes(), comparator);
 	}
 	
@@ -135,285 +129,15 @@ public class GedcomToFamilytree {
 	 * @param children
 	 * @param childValueSorter
 	 */
-	private void sortChildren(LinkedList<PrintableTreeNode<String, GedcomToFamilytreeIndividual[]>> children, 
-			Comparator<PrintableTreeNode<String, GedcomToFamilytreeIndividual[]>> childValueSorter) {
-		for (PrintableTreeNode<String, GedcomToFamilytreeIndividual[]> child : children) {
+	private void sortChildren(LinkedList<FamilyTreeNode> children, 
+			Comparator<FamilyTreeNode> childValueSorter) {
+		for (FamilyTreeNode child : children) {
 			//Sort the child
 			child.sortChildNodesByValue(childValueSorter);
 			//And all its children
 			sortChildren(child.getChildNodes(), childValueSorter);
 		}
 	}
-	
-	/**
-	 * 
-	 * 
-	 * @param showGender
-	 * @param showRelationship
-	 * @param showEmail
-	 * @param showAddress
-	 * @param showAge
-	 * @param showBirthDate
-	 * @param showDeathDate
-	 * @param showMarriedName
-	 * @param printDivorced
-	 * @return
-	 */
-	public StringBuilder printTextFamilyTree(boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) {
-		
-		if (textPrinter == null) {
-			textPrinter = new FamilytreeTextPrinter(this, showGender, 
-					showRelationship, showEmail, showAddress, showAge, showBirthDate, 
-					showDeathDate, showMarriedName, printDivorced);
-		}
-		
-		return textPrinter.print(familyTree);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param alignValuesRight
-	 * @param showGender
-	 * @param showRelationship
-	 * @param showEmail
-	 * @param showAddress
-	 * @param showAge
-	 * @param showBirthDate
-	 * @param showDeathDate
-	 * @param showMarriedName
-	 * @param printDivorced
-	 * @return
-	 */
-	public StringBuilder printCSVFamilyTree(boolean alignValuesRight, boolean showGender, 
-			boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) {
-		
-		if (csvPrinter == null) {
-			csvPrinter = new FamilytreeCSVPrinter(this, alignValuesRight, showGender, 
-					showRelationship, showEmail, showAddress, showAge, showBirthDate, 
-					showDeathDate, showMarriedName, printDivorced);
-		}
-		
-		return csvPrinter.print(familyTree);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param treeTitle
-	 * @param useColors
-	 * @param showGender
-	 * @param showRelationship
-	 * @param showEmail
-	 * @param showAddress
-	 * @param showAge
-	 * @param showBirthDate
-	 * @param showDeathDate
-	 * @param showMarriedName
-	 * @param printDivorced
-	 * @return
-	 */
-	public StringBuilder printHtmlFamilyTree(String treeTitle, 
-			boolean useColors, boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, 
-			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
-			boolean printDivorced) {
-		
-		StringBuilder sb = new StringBuilder();
-		
-		if (htmlPrinter == null) {
-			htmlPrinter = new FamilytreeHTMLPrinter(this, 
-					useColors, showGender, showRelationship, showEmail, showAddress, 
-					showAge, showBirthDate, showDeathDate, showMarriedName, printDivorced);
-		}
-		
-		htmlPrinter.appendSimpleHeader(sb, treeTitle);
-		
-		sb.append(htmlPrinter.print(familyTree));
-		
-		htmlPrinter.appendSimpleFooter(sb);
-		
-		return sb;
-	}
-	
-//	/**
-//	 * 
-//	 * 
-//	 * @param treeTitle
-//	 * @param useColors
-//	 * @param showGender
-//	 * @param showRelationship
-//	 * @param showEmail
-//	 * @param showAddress
-//	 * @param showAge
-//	 * @param showBirthDate
-//	 * @param showDeathDate
-//	 * @param showMarriedName
-//	 * @param printDivorced
-//	 * @param boxWidth
-//	 * @return
-//	 */
-//	public StringBuilder printHorizontalHtmlFamilyTree(String treeTitle, 
-//			boolean useColors, boolean showGender, boolean showRelationship, 
-//			boolean showEmail, boolean showAddress, boolean showAge, 
-//			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
-//			boolean printDivorced, int boxWidth) {
-//		
-//		StringBuilder sb = new StringBuilder();
-//		
-//		if (horizontalHtmlPrinter == null) {
-//			horizontalHtmlPrinter = new HorizontalFamilytreeHTMLPrinter(this, useColors, 
-//					showGender, showRelationship, showEmail, showAddress, showAge, 
-//					showBirthDate, showDeathDate, showMarriedName, printDivorced, boxWidth);
-//		}
-//		
-//		horizontalHtmlPrinter.appendSimpleHeader(sb, treeTitle);
-//		
-//		sb.append(horizontalHtmlPrinter.print(familyTree));
-//		
-//		horizontalHtmlPrinter.appendSimpleFooter(sb);
-//		
-//		return sb;
-//	}
-	
-	
-	/**
-	 * 
-	 * 
-	 * @param targetFile
-	 * @param showGender
-	 * @param showRelationship
-	 * @param showEmail
-	 * @param showAddress
-	 * @param showAge
-	 * @param showBirthDate
-	 * @param showDeathDate
-	 * @param showMarriedName
-	 * @param printDivorced
-	 * @throws IOException
-	 */
-	public void writeTextFamilyTree(String targetFile, boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) throws IOException {
-		System.out.println("Writing family tree (TXT) to " + targetFile);
-		
-		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
-		
-		//Writes all at once as string
-		output.write(printTextFamilyTree(showGender, showRelationship, showEmail, 
-				showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
-				printDivorced).toString());
-		
-		output.close();
-		System.out.println("Family tree (TXT) written to " + targetFile);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param targetFile
-	 * @param alignValuesRight
-	 * @param showGender
-	 * @param showRelationship
-	 * @param showEmail
-	 * @param showAddress
-	 * @param showAge
-	 * @param showBirthDate
-	 * @param showDeathDate
-	 * @param showMarriedName
-	 * @param printDivorced
-	 * @throws IOException
-	 */
-	public void writeCSVFamilyTree(String targetFile, boolean alignValuesRight, 
-			boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) throws IOException {
-		System.out.println("Writing family tree (CSV) to " + targetFile);
-		
-		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
-		
-		//Writes all at once as string
-		output.write(printCSVFamilyTree(alignValuesRight, showGender, showRelationship, showEmail, 
-				showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
-				printDivorced).toString());
-		
-		output.close();
-		System.out.println("Family tree (CSV) written to " + targetFile);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param targetFile
-	 * @param treeTitle
-	 * @param useColors
-	 * @param showGender
-	 * @param showRelationship
-	 * @param showEmail
-	 * @param showAddress
-	 * @param showAge
-	 * @param showBirthDate
-	 * @param showDeathDate
-	 * @param showMarriedName
-	 * @param printDivorced
-	 * @throws IOException
-	 */
-	public void writeHTMLFamilyTree(String targetFile, String treeTitle, 
-			boolean useColors, boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, 
-			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
-			boolean printDivorced) throws IOException {
-		System.out.println("Writing family tree (HTML) to " + targetFile);
-		
-		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
-		
-		//Writes all at once as string
-		output.write(printHtmlFamilyTree(treeTitle, useColors, showGender, showRelationship, 
-				showEmail, showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
-				printDivorced).toString());
-		
-		output.close();
-		System.out.println("Family tree (HTML) written to " + targetFile);
-	}
-	
-//	/**
-//	 * 
-//	 * 
-//	 * @param targetFile
-//	 * @param treeTitle
-//	 * @param useColors
-//	 * @param showGender
-//	 * @param showRelationship
-//	 * @param showEmail
-//	 * @param showAddress
-//	 * @param showAge
-//	 * @param showBirthDate
-//	 * @param showDeathDate
-//	 * @param showMarriedName
-//	 * @param printDivorced
-//	 * @throws IOException
-//	 */
-//	public void writeHorizontalHTMLFamilyTree(String targetFile, String treeTitle, 
-//			boolean useColors, boolean showGender, boolean showRelationship, 
-//			boolean showEmail, boolean showAddress, boolean showAge, 
-//			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
-//			boolean printDivorced, int boxWidth) throws IOException {
-//		System.out.println("Writing family tree (HTML) to " + targetFile);
-//		
-//		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
-//		
-//		//Writes all at once as string
-//		output.write(printHorizontalHtmlFamilyTree(treeTitle, useColors, showGender, showRelationship, 
-//				showEmail, showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
-//				printDivorced, boxWidth).toString());
-//		
-//		output.close();
-//		System.out.println("Family tree (HTML) written to " + targetFile);
-//	}
 	
 	/**
 	 * Add a child for building the family tree
@@ -432,7 +156,7 @@ public class GedcomToFamilytree {
 		GedcomNode indi = searchForNode(startNode, "INDI");
 		
 		//Get all the links to this individuals families
-		LinkedList<PrintableTreeNode<String, GedcomLine>> famsLinks = indi.getChildNodes("SPOUSE_TO_FAMILY_LINK");
+		LinkedList<GedcomNode> famsLinks = indi.getChildLines("SPOUSE_TO_FAMILY_LINK");
 		
 		//No family for this individual
 		if (famsLinks == null || famsLinks.size() == 0) {
@@ -444,8 +168,8 @@ public class GedcomToFamilytree {
 		boolean familyAdded = false;
 		
 		//Process the family (or families) for this individual
-		for (PrintableTreeNode<String, GedcomLine> famsLink : famsLinks) {
-			String famXRef = ((GedcomNode)famsLink.getChildNode("FAMS", 0)).getTagLineXRef();
+		for (GedcomNode famsLink : famsLinks) {
+			String famXRef = famsLink.getChildLine("FAMS", 0).getTagLineXRef();
 			
 			if (famXRef == null || famXRef.length() == 0) {
 				//An empty FAMS link
@@ -466,21 +190,21 @@ public class GedcomToFamilytree {
 			String husbXRef = null;
 			String wifeXRef = null;
 			
-			if (family.hasChildNode("HUSB")) {
+			if (family.hasChildLine("HUSB")) {
 				husbXRef = family.getChildLine("HUSB", 0).getTagLineXRef();
 			}
 			
-			if (family.hasChildNode("WIFE")) {
+			if (family.hasChildLine("WIFE")) {
 				wifeXRef = family.getChildLine("WIFE", 0).getTagLineXRef();
 			}
 						
-			LinkedList<PrintableTreeNode<String, GedcomLine>> childrenLinks = family.getChildNodes("CHIL");
+			LinkedList<GedcomNode> childrenLinks = family.getChildLines("CHIL");
 			
 			LinkedList<String> childXRefs = new LinkedList<String>();
 			
 			if (childrenLinks != null) {
-				for (PrintableTreeNode<String, GedcomLine> childLink : childrenLinks) {
-					childXRefs.add(((GedcomNode)childLink).getTagLineXRef());
+				for (GedcomNode childLink : childrenLinks) {
+					childXRefs.add(childLink.getTagLineXRef());
 				}
 			}
 						
@@ -804,21 +528,21 @@ public class GedcomToFamilytree {
 	 */
 	private GedcomNode searchForNode(GedcomNode startNode, String tagOrStructureName) {
 		
-		if (startNode.getNodeValue().isStructureLine()) {
-			if (startNode.getNodeValue().getAsStructureLine().getStructureName().equals(tagOrStructureName)) {
+		if (startNode.getNodeLine().isStructureLine()) {
+			if (startNode.getNodeLine().getAsStructureLine().getStructureName().equals(tagOrStructureName)) {
 				return startNode;
 			}
 		} else {
-			if (startNode.getNodeValue().getAsTagLine().getTag().equals(tagOrStructureName)) {
+			if (startNode.getNodeLine().getAsTagLine().getTag().equals(tagOrStructureName)) {
 				return startNode;
 			}
 		}
 		
-		if (!startNode.hasChildNode(tagOrStructureName)) {
+		if (!startNode.hasChildLine(tagOrStructureName)) {
 			
-			LinkedList<PrintableTreeNode<String, GedcomLine>> children = startNode.getChildNodes();
-			for (PrintableTreeNode<String, GedcomLine> node : children) {
-				GedcomNode ret = searchForNode((GedcomNode)node, tagOrStructureName);
+			LinkedList<GedcomNode> children = startNode.getChildLines();
+			for (GedcomNode node : children) {
+				GedcomNode ret = searchForNode(node, tagOrStructureName);
 				if (ret != null) {
 					return ret;
 				}
@@ -832,5 +556,203 @@ public class GedcomToFamilytree {
 		}
 		
 	}
+	
+	
+	
+	/**
+	 * 
+	 * 
+	 * @param showGender
+	 * @param showRelationship
+	 * @param showEmail
+	 * @param showAddress
+	 * @param showAge
+	 * @param showBirthDate
+	 * @param showDeathDate
+	 * @param showMarriedName
+	 * @param printDivorced
+	 * @return
+	 */
+	public StringBuilder printTextFamilyTree(boolean showGender, boolean showRelationship, 
+			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
+			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) {
+		
+		if (textPrinter == null) {
+			textPrinter = new FamilytreeTextPrinter(this, showGender, 
+					showRelationship, showEmail, showAddress, showAge, showBirthDate, 
+					showDeathDate, showMarriedName, printDivorced);
+		}
+		
+		return textPrinter.print(familyTree);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param alignValuesRight
+	 * @param showGender
+	 * @param showRelationship
+	 * @param showEmail
+	 * @param showAddress
+	 * @param showAge
+	 * @param showBirthDate
+	 * @param showDeathDate
+	 * @param showMarriedName
+	 * @param printDivorced
+	 * @return
+	 */
+	public StringBuilder printCSVFamilyTree(boolean alignValuesRight, boolean showGender, 
+			boolean showRelationship, 
+			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
+			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) {
+		
+		if (csvPrinter == null) {
+			csvPrinter = new FamilytreeCSVPrinter(this, alignValuesRight, showGender, 
+					showRelationship, showEmail, showAddress, showAge, showBirthDate, 
+					showDeathDate, showMarriedName, printDivorced);
+		}
+		
+		return csvPrinter.print(familyTree);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param treeTitle
+	 * @param useColors
+	 * @param showGender
+	 * @param showRelationship
+	 * @param showEmail
+	 * @param showAddress
+	 * @param showAge
+	 * @param showBirthDate
+	 * @param showDeathDate
+	 * @param showMarriedName
+	 * @param printDivorced
+	 * @return
+	 */
+	public StringBuilder printHtmlFamilyTree(String treeTitle, 
+			boolean useColors, boolean showGender, boolean showRelationship, 
+			boolean showEmail, boolean showAddress, boolean showAge, 
+			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
+			boolean printDivorced) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		if (htmlPrinter == null) {
+			htmlPrinter = new FamilytreeHTMLPrinter(this, 
+					useColors, showGender, showRelationship, showEmail, showAddress, 
+					showAge, showBirthDate, showDeathDate, showMarriedName, printDivorced);
+		}
+		
+		htmlPrinter.appendSimpleHeader(sb, treeTitle);
+		
+		sb.append(htmlPrinter.print(familyTree));
+		
+		htmlPrinter.appendSimpleFooter(sb);
+		
+		return sb;
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 * @param targetFile
+	 * @param showGender
+	 * @param showRelationship
+	 * @param showEmail
+	 * @param showAddress
+	 * @param showAge
+	 * @param showBirthDate
+	 * @param showDeathDate
+	 * @param showMarriedName
+	 * @param printDivorced
+	 * @throws IOException
+	 */
+	public void writeTextFamilyTree(String targetFile, boolean showGender, boolean showRelationship, 
+			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
+			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) throws IOException {
+		System.out.println("Writing family tree (TXT) to " + targetFile);
+		
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
+		
+		//Writes all at once as string
+		output.write(printTextFamilyTree(showGender, showRelationship, showEmail, 
+				showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
+				printDivorced).toString());
+		
+		output.close();
+		System.out.println("Family tree (TXT) written to " + targetFile);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param targetFile
+	 * @param alignValuesRight
+	 * @param showGender
+	 * @param showRelationship
+	 * @param showEmail
+	 * @param showAddress
+	 * @param showAge
+	 * @param showBirthDate
+	 * @param showDeathDate
+	 * @param showMarriedName
+	 * @param printDivorced
+	 * @throws IOException
+	 */
+	public void writeCSVFamilyTree(String targetFile, boolean alignValuesRight, 
+			boolean showGender, boolean showRelationship, 
+			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
+			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) throws IOException {
+		System.out.println("Writing family tree (CSV) to " + targetFile);
+		
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
+		
+		//Writes all at once as string
+		output.write(printCSVFamilyTree(alignValuesRight, showGender, showRelationship, showEmail, 
+				showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
+				printDivorced).toString());
+		
+		output.close();
+		System.out.println("Family tree (CSV) written to " + targetFile);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param targetFile
+	 * @param treeTitle
+	 * @param useColors
+	 * @param showGender
+	 * @param showRelationship
+	 * @param showEmail
+	 * @param showAddress
+	 * @param showAge
+	 * @param showBirthDate
+	 * @param showDeathDate
+	 * @param showMarriedName
+	 * @param printDivorced
+	 * @throws IOException
+	 */
+	public void writeHTMLFamilyTree(String targetFile, String treeTitle, 
+			boolean useColors, boolean showGender, boolean showRelationship, 
+			boolean showEmail, boolean showAddress, boolean showAge, 
+			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
+			boolean printDivorced) throws IOException {
+		System.out.println("Writing family tree (HTML) to " + targetFile);
+		
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
+		
+		//Writes all at once as string
+		output.write(printHtmlFamilyTree(treeTitle, useColors, showGender, showRelationship, 
+				showEmail, showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
+				printDivorced).toString());
+		
+		output.close();
+		System.out.println("Family tree (HTML) written to " + targetFile);
+	}
+	
 	
 }

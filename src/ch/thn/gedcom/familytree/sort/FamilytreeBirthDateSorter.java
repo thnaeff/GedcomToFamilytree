@@ -50,8 +50,8 @@ public class FamilytreeBirthDateSorter implements FamilyTreeSorter {
 
 	@Override
 	public int compare(FamilyTreeNode treeNode1, FamilyTreeNode treeNode2) {
-		GedcomToFamilytreeIndividual indi1 = treeNode1.getNodeValue()[0];
-		GedcomToFamilytreeIndividual indi2 = treeNode2.getNodeValue()[0];
+		GedcomToFamilytreeIndividual indi1 = treeNode1.getIndividuals()[0];
+		GedcomToFamilytreeIndividual indi2 = treeNode2.getIndividuals()[0];
 		
 		if (indi1 == null || indi2 == null) {
 			return 0;

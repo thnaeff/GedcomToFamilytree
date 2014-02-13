@@ -19,13 +19,14 @@ package ch.thn.gedcom.familytree.printer;
 import java.util.ArrayList;
 
 import ch.thn.gedcom.creator.GedcomCreatorFamily;
+import ch.thn.gedcom.familytree.FamilyTreeNode;
 import ch.thn.gedcom.familytree.GedcomToFamilytree;
 import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
-import ch.thn.util.tree.printable.PrintableTreeNode;
+import ch.thn.util.tree.printable.TreePrinter;
 import ch.thn.util.tree.printable.printer.TextTreePrinterLines;
-import ch.thn.util.tree.printable.printer.TreePrinter;
+import ch.thn.util.tree.printable.printer.TreePrinterNode;
 import ch.thn.util.tree.printable.printer.TreePrinterTree;
-import ch.thn.util.tree.printable.printer.vertical.VerticalCSVTreePrinter;
+import ch.thn.util.tree.printable.printer.vertical.GenericVerticalCSVTreePrinter;
 
 /**
  * 
@@ -33,7 +34,8 @@ import ch.thn.util.tree.printable.printer.vertical.VerticalCSVTreePrinter;
  * @author Thomas Naeff (github.com/thnaeff)
  *
  */
-public class FamilytreeCSVPrinter extends VerticalCSVTreePrinter<String, GedcomToFamilytreeIndividual[]> implements FamilytreePrinter {
+public class FamilytreeCSVPrinter 
+	extends GenericVerticalCSVTreePrinter<String, GedcomToFamilytreeIndividual[], FamilyTreeNode> implements FamilytreePrinter {
 	
 	private FamilyTreePrintBuilder printBuilder = null;
 		
@@ -70,11 +72,26 @@ public class FamilytreeCSVPrinter extends VerticalCSVTreePrinter<String, GedcomT
 	}
 	
 	@Override
-	protected TextTreePrinterLines getNodeData(
-			PrintableTreeNode<String, GedcomToFamilytreeIndividual[]> node) {
+	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
 		
 		return printBuilder.createNodeValueLines(node, this, false, true);
 		
+	}
+	
+	@Override
+	protected void preProcessingNode(
+			TreePrinterNode<String, TextTreePrinterLines> printerNode,
+			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
+			boolean isHeadNode, boolean isFirstChildNode,
+			boolean isLastChildNode, boolean hasChildNodes) {
+	}
+
+	@Override
+	protected void postProcessingNode(
+			TreePrinterNode<String, TextTreePrinterLines> printerNode,
+			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
+			boolean isHeadNode, boolean isFirstChildNode,
+			boolean isLastChildNode, boolean hasChildNodes) {
 	}
 	
 	@Override

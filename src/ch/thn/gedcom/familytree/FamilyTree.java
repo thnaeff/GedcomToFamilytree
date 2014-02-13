@@ -37,6 +37,11 @@ public class FamilyTree extends FamilyTreeNode {
 		super("familyTreeTitle", null, null);
 		
 		this.familyTreeTitle = familyTreeTitle;
+		
+		if (familyTreeTitle == null) {
+			//Do not show this node if there is no title
+			setInvisibleNode(true);
+		}
 	}
 	
 	

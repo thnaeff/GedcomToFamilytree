@@ -21,12 +21,13 @@ import java.util.ArrayList;
 
 import ch.thn.gedcom.creator.GedcomCreatorFamily;
 import ch.thn.gedcom.creator.GedcomCreatorEnums.Sex;
+import ch.thn.gedcom.familytree.FamilyTreeNode;
 import ch.thn.gedcom.familytree.GedcomToFamilytree;
 import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
-import ch.thn.util.tree.printable.PrintableTreeNode;
+import ch.thn.util.tree.printable.TreePrinter;
 import ch.thn.util.tree.printable.printer.TextTreePrinterLines;
-import ch.thn.util.tree.printable.printer.TreePrinter;
-import ch.thn.util.tree.printable.printer.vertical.VerticalHTMLTreePrinter;
+import ch.thn.util.tree.printable.printer.TreePrinterNode;
+import ch.thn.util.tree.printable.printer.vertical.GenericVerticalHTMLTreePrinter;
 
 /**
  * 
@@ -35,7 +36,7 @@ import ch.thn.util.tree.printable.printer.vertical.VerticalHTMLTreePrinter;
  *
  */
 public class FamilytreeHTMLPrinter 
-	extends VerticalHTMLTreePrinter<String, GedcomToFamilytreeIndividual[]> implements FamilytreePrinter {
+	extends GenericVerticalHTMLTreePrinter<String, GedcomToFamilytreeIndividual[], FamilyTreeNode> implements FamilytreePrinter {
 	
 	private static final String HTMLSPACE = "&nbsp;";
 	
@@ -80,11 +81,26 @@ public class FamilytreeHTMLPrinter
 	
 	
 	@Override
-	protected TextTreePrinterLines getNodeData(
-			PrintableTreeNode<String, GedcomToFamilytreeIndividual[]> node) {
+	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
 		
 		return printBuilder.createNodeValueLines(node, this, true, true);
 		
+	}
+	
+	@Override
+	protected void preProcessingNode(
+			TreePrinterNode<String, TextTreePrinterLines> printerNode,
+			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
+			boolean isHeadNode, boolean isFirstChildNode,
+			boolean isLastChildNode, boolean hasChildNodes) {
+	}
+
+	@Override
+	protected void postProcessingNode(
+			TreePrinterNode<String, TextTreePrinterLines> printerNode,
+			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
+			boolean isHeadNode, boolean isFirstChildNode,
+			boolean isLastChildNode, boolean hasChildNodes) {
 	}
 	
 	
@@ -231,5 +247,6 @@ public class FamilytreeHTMLPrinter
 		sb.append("</style>" + TreePrinter.LINE_SEPARATOR);
 		
 	}
+	
 	
 }

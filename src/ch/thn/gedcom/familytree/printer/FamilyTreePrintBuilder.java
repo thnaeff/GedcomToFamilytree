@@ -25,10 +25,10 @@ import ch.thn.gedcom.creator.GedcomCreatorEnums.NameType;
 import ch.thn.gedcom.creator.GedcomCreatorEnums.Sex;
 import ch.thn.gedcom.data.GedcomNode;
 import ch.thn.gedcom.familytree.FamilyTree;
+import ch.thn.gedcom.familytree.FamilyTreeNode;
 import ch.thn.gedcom.familytree.GedcomToFamilytree;
 import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
 import ch.thn.util.StringUtil;
-import ch.thn.util.tree.printable.PrintableTreeNode;
 import ch.thn.util.tree.printable.printer.TextTreePrinterLines;
 
 /**
@@ -517,8 +517,7 @@ public class FamilyTreePrintBuilder {
 	 * @param replaceNullValue Replace <code>null</code> values with an empty value
 	 * @return
 	 */
-	public TextTreePrinterLines createNodeValueLines(
-			PrintableTreeNode<String, GedcomToFamilytreeIndividual[]> currentNode, 
+	public TextTreePrinterLines createNodeValueLines(FamilyTreeNode currentNode, 
 			FamilytreePrinter printer, boolean addEmptyLineAtEnd, boolean replaceNullValue) {
 		TextTreePrinterLines lines = new TextTreePrinterLines(false, replaceNullValue, null, "");
 		
@@ -530,7 +529,7 @@ public class FamilyTreePrintBuilder {
 		}
 		
 		//The individuals
-		GedcomToFamilytreeIndividual[] values = currentNode.getNodeValue();
+		GedcomToFamilytreeIndividual[] values = currentNode.getIndividuals();
 		
 		GedcomCreatorFamily family = getFamily(values[0], values[1]);
 		
