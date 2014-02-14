@@ -37,5 +37,10 @@ public class GedcomToFamilytreeIndividual extends GedcomCreatorIndividual {
 		super(store, node);
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "ID: " + super.getId();
+	}
 
 }

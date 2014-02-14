@@ -564,25 +564,32 @@ public class GedcomToFamilytree {
 	/**
 	 * 
 	 * 
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 * @return
 	 */
-	public StringBuilder printTextFamilyTree(boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) {
+	public StringBuilder printTextFamilyTree(boolean showId, 
+			boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		
 		if (textPrinter == null) {
-			textPrinter = new FamilytreeTextPrinter(this, showGender, 
-					showRelationship, showEmail, showAddress, showAge, showBirthDate, 
-					showDeathDate, showMarriedName, printDivorced);
+			textPrinter = new FamilytreeTextPrinter(this, showId, showGender, 
+					showRelationship, showEmail, showAddress, showAgeForDead, 
+					showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+					showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
 		}
 		
 		return textPrinter.print(familyTree);
@@ -592,26 +599,32 @@ public class GedcomToFamilytree {
 	 * 
 	 * 
 	 * @param alignValuesRight
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 * @return
 	 */
-	public StringBuilder printCSVFamilyTree(boolean alignValuesRight, boolean showGender, 
-			boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) {
+	public StringBuilder printCSVFamilyTree(boolean alignValuesRight, boolean showId, 
+			boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		
 		if (csvPrinter == null) {
-			csvPrinter = new FamilytreeCSVPrinter(this, alignValuesRight, showGender, 
-					showRelationship, showEmail, showAddress, showAge, showBirthDate, 
-					showDeathDate, showMarriedName, printDivorced);
+			csvPrinter = new FamilytreeCSVPrinter(this, alignValuesRight, showId, 
+					showGender, showRelationship, showEmail, showAddress, showAgeForDead, 
+					showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+					showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
 		}
 		
 		return csvPrinter.print(familyTree);
@@ -622,29 +635,35 @@ public class GedcomToFamilytree {
 	 * 
 	 * @param treeTitle
 	 * @param useColors
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 * @return
 	 */
 	public StringBuilder printHtmlFamilyTree(String treeTitle, 
-			boolean useColors, boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, 
-			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
-			boolean printDivorced) {
+			boolean useColors, boolean showId, 
+			boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		
 		StringBuilder sb = new StringBuilder();
 		
 		if (htmlPrinter == null) {
-			htmlPrinter = new FamilytreeHTMLPrinter(this, 
-					useColors, showGender, showRelationship, showEmail, showAddress, 
-					showAge, showBirthDate, showDeathDate, showMarriedName, printDivorced);
+			htmlPrinter = new FamilytreeHTMLPrinter(this, useColors, showId, 
+					showGender, showRelationship, showEmail, showAddress, showAgeForDead, 
+					showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+					showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
 		}
 		
 		htmlPrinter.appendSimpleHeader(sb, treeTitle);
@@ -661,28 +680,36 @@ public class GedcomToFamilytree {
 	 * 
 	 * 
 	 * @param targetFile
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 * @throws IOException
 	 */
-	public void writeTextFamilyTree(String targetFile, boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) throws IOException {
+	public void writeTextFamilyTree(String targetFile, boolean showId, 
+			boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) 
+					throws IOException {
 		System.out.println("Writing family tree (TXT) to " + targetFile);
 		
 		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
 		
 		//Writes all at once as string
-		output.write(printTextFamilyTree(showGender, showRelationship, showEmail, 
-				showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
-				printDivorced).toString());
+		output.write(printTextFamilyTree(showId, showGender, showRelationship, 
+				showEmail, showAddress, showAgeForDead, showBirthDate, 
+				showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren).toString());
 		
 		output.close();
 		System.out.println("Family tree (TXT) written to " + targetFile);
@@ -693,29 +720,37 @@ public class GedcomToFamilytree {
 	 * 
 	 * @param targetFile
 	 * @param alignValuesRight
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 * @throws IOException
 	 */
 	public void writeCSVFamilyTree(String targetFile, boolean alignValuesRight, 
-			boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, boolean showBirthDate, 
-			boolean showDeathDate, boolean showMarriedName, boolean printDivorced) throws IOException {
+			boolean showId, 
+			boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) 
+					throws IOException {
 		System.out.println("Writing family tree (CSV) to " + targetFile);
 		
 		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
 		
 		//Writes all at once as string
-		output.write(printCSVFamilyTree(alignValuesRight, showGender, showRelationship, showEmail, 
-				showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
-				printDivorced).toString());
+		output.write(printCSVFamilyTree(alignValuesRight, showId, showGender, 
+				showRelationship, showEmail, showAddress, showAgeForDead, 
+				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren).toString());
 		
 		output.close();
 		System.out.println("Family tree (CSV) written to " + targetFile);
@@ -727,30 +762,37 @@ public class GedcomToFamilytree {
 	 * @param targetFile
 	 * @param treeTitle
 	 * @param useColors
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 * @throws IOException
 	 */
 	public void writeHTMLFamilyTree(String targetFile, String treeTitle, 
-			boolean useColors, boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, 
-			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
-			boolean printDivorced) throws IOException {
+			boolean useColors, boolean showId, 
+			boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) 
+					throws IOException {
 		System.out.println("Writing family tree (HTML) to " + targetFile);
 		
 		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
 		
 		//Writes all at once as string
-		output.write(printHtmlFamilyTree(treeTitle, useColors, showGender, showRelationship, 
-				showEmail, showAddress, showAge, showBirthDate, showDeathDate, showMarriedName, 
-				printDivorced).toString());
+		output.write(printHtmlFamilyTree(treeTitle, useColors, showId, showGender, 
+				showRelationship, showEmail, showAddress, showAgeForDead, 
+				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren).toString());
 		
 		output.close();
 		System.out.println("Family tree (HTML) written to " + targetFile);

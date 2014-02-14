@@ -41,25 +41,31 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	 * 
 	 * 
 	 * @param toFamilyTree
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 */
-	public FamilytreeTextPrinter(GedcomToFamilytree toFamilyTree, 
+	public FamilytreeTextPrinter(GedcomToFamilytree toFamilyTree, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
-			boolean showAddress, boolean showAge, boolean showBirthDate, boolean showDeathDate, 
-			boolean showMarriedName, boolean printDivorced) {
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		super(true, true, true, false);
 		
-		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showGender, 
-				showRelationship, showEmail, showAddress, showAge, showBirthDate, 
-				showDeathDate, showMarriedName, printDivorced);
+		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
+				showRelationship, showEmail, showAddress, showAgeForDead, 
+				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
 		
 	}
 	
@@ -101,12 +107,38 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 		values.add(printBuilder.getGender(indi, String.valueOf((char)0x2642), String.valueOf((char)0x2640), "", "").toString());
 		
 		if (family != null) {
-			values.add(printBuilder.getRelationship(family, String.valueOf((char)0x26AD), String.valueOf((char)0x26AE), String.valueOf((char)0x26AF), "", " ").toString());
+			values.add(printBuilder.getRelationship(family, String.valueOf((char)0x26AD), String.valueOf((char)0x26AE), String.valueOf((char)0x26AF), "", "").toString());
 		}
 		
 		values.add(printBuilder.getFirstName(indi, "", "").toString());
-		values.add(printBuilder.getLastName(indi, "", "").toString());
-		values.add(printBuilder.getMarriedName(indi, family, "(", ")").toString());
+		
+		String married = printBuilder.getMarriedName(indi, family, "", "", true).toString();
+		String maiden = printBuilder.getMaidenName(indi, "", "", true).toString();
+		
+		if (!printBuilder.showMarriedName()) {
+			if (maiden.length() > 0) {
+				//Clear the married name only if there is a maiden name
+				married = "";
+			}
+		}
+		if (!printBuilder.showMaidenName()) {
+			if (married.length() > 0) {
+				//Clear the maiden name only if there is a maiden name
+				maiden = "";
+			}
+		}
+		
+		values.add(married);
+		
+		if (married.length() == 0) {
+			//If there is no married name, use the last name
+			values.add(maiden);
+		} else {
+			//If there is a married name, also add the last name if there is one
+			if (maiden.length() > 0) {
+				values.add("(" + maiden + ")");
+			}
+		}
 		
 		StringBuilder birthDate = printBuilder.getBirthDate(indi, String.valueOf((char)0x274A), "");
 		StringBuilder sbLifespan = new StringBuilder();
@@ -137,7 +169,12 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 		ArrayList<String> values = new ArrayList<String>(3);
 		
 		//A little space in front of the additional line
-		values.add("  ");
+		values.add(FamilytreeTextPrinter.createColumnString(printBuilder.getId((isPartner ? partner : indi), "", "").length(), " "));
+		
+		if (isPartner) {
+			//Extra space for partners on additional lines
+			values.add(" ");
+		}
 		
 		StringBuilder email = printBuilder.getEmail(indi, (char)0x2709 + " ", "");
 		StringBuilder address = null;
@@ -193,6 +230,29 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 		}
 		
 		
+	}
+	
+	
+	/**
+	 * This method just repeatedly appends the content of columnContent and returns 
+	 * the result.
+	 * 
+	 * @param numberOfColumns
+	 * @param columnContent
+	 * @return
+	 */
+	public static String createColumnString(int numberOfColumns, String columnContent) {
+		if (numberOfColumns < 0 || columnContent == null) {
+			return "";
+		}
+		
+		StringBuilder sb = new StringBuilder(numberOfColumns * columnContent.length());
+		
+		for (int i = 0; i < numberOfColumns; i++) {
+			sb.append(columnContent);
+		}
+		
+		return sb.toString();
 	}
 	
 	

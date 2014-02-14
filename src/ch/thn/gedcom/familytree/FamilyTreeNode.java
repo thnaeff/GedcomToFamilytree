@@ -126,11 +126,6 @@ public class FamilyTreeNode
 					FamilytreePrinter.class.getSimpleName() + " is used.");
 		}
 		
-		if (printBuilder.printDivorced()) {
-			//Print all families
-			return true;
-		}
-		
 		GedcomToFamilytreeIndividual[] parents = getNodeValue();
 
 		if (!printFamily(printBuilder, parents[0], parents[1])) {

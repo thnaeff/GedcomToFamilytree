@@ -44,25 +44,31 @@ public class FamilytreeCSVPrinter
 	 * 
 	 * @param toFamilyTree
 	 * @param alignValuesRight
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 */
 	public FamilytreeCSVPrinter(GedcomToFamilytree toFamilyTree, boolean alignValuesRight, 
-			boolean showGender, boolean showRelationship, boolean showEmail, 
-			boolean showAddress, boolean showAge, boolean showBirthDate, boolean showDeathDate, 
-			boolean showMarriedName, boolean printDivorced) {
+			boolean showId, boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		super(true, true, true, alignValuesRight, true);
 		
-		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showGender, 
-				showRelationship, showEmail, showAddress, false, showBirthDate, 
-				showDeathDate, showMarriedName, printDivorced);
+		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
+				showRelationship, showEmail, showAddress, showAgeForDead, 
+				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
 		
 	}
 	
@@ -125,8 +131,8 @@ public class FamilytreeCSVPrinter
 			values.add("");
 		}
 		
-		values.add(printBuilder.getLastName(indi, "", "").toString());
-		values.add(printBuilder.getMarriedName(indi, family, "", "").toString());
+		values.add(printBuilder.getMaidenName(indi, "", "", false).toString());
+		values.add(printBuilder.getMarriedName(indi, family, "", "", false).toString());
 		
 		StringBuilder birthDate = printBuilder.getBirthDate(indi, "", "");
 		
@@ -158,13 +164,10 @@ public class FamilytreeCSVPrinter
 			values.add("");
 		}
 		
-		StringBuilder address = printBuilder.getAddress(indi, "", "");
+		ArrayList<String> addressParts = printBuilder.getAddressParts(indi, true);
 		
-		if (address.length() > 0) {
-			values.add(address.toString());
-		} else {
-			//Empty placeholder for address
-			values.add("");
+		for (String part : addressParts) {
+			values.add(part);
 		}
 		
 		return values;
@@ -207,7 +210,7 @@ public class FamilytreeCSVPrinter
 		sb.append(DELIMITER);
 		sb.append("middle_names");
 		sb.append(DELIMITER);
-		sb.append("family_name");
+		sb.append("maiden_name");
 		sb.append(DELIMITER);
 		sb.append("married_name");
 		sb.append(DELIMITER);
@@ -217,7 +220,15 @@ public class FamilytreeCSVPrinter
 		sb.append(DELIMITER);
 		sb.append("email");
 		sb.append(DELIMITER);
-		sb.append("address");	
+		sb.append("street1");	
+		sb.append(DELIMITER);
+		sb.append("street2");	
+		sb.append(DELIMITER);
+		sb.append("post");	
+		sb.append(DELIMITER);
+		sb.append("city");	
+		sb.append(DELIMITER);
+		sb.append("country");	
 		sb.append(DELIMITER);
 		
 		sb.append(TreePrinter.LINE_SEPARATOR);

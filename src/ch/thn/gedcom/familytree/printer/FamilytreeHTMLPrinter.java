@@ -47,26 +47,32 @@ public class FamilytreeHTMLPrinter
 	 * 
 	 * @param toFamilyTree
 	 * @param useColors
+	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
 	 * @param showEmail
 	 * @param showAddress
-	 * @param showAge
+	 * @param showAgeForDead
 	 * @param showBirthDate
 	 * @param showDeathDate
+	 * @param showFirstName
+	 * @param showMaidenName
 	 * @param showMarriedName
-	 * @param printDivorced
+	 * @param showDivorcedPartnerWithoutChildren
+	 * @param showDivorcedPartnerWithChildren
 	 */
 	public FamilytreeHTMLPrinter(GedcomToFamilytree toFamilyTree, 
-			boolean useColors, boolean showGender, boolean showRelationship, 
-			boolean showEmail, boolean showAddress, boolean showAge, 
-			boolean showBirthDate, boolean showDeathDate, boolean showMarriedName, 
-			boolean printDivorced) {
+			boolean useColors, boolean showId, 
+			boolean showGender, boolean showRelationship, boolean showEmail, 
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		super(true, true, useColors, true, false);
 		
-		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showGender, 
-				showRelationship, showEmail, showAddress, showAge, showBirthDate, 
-				showDeathDate, showMarriedName, printDivorced);
+		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
+				showRelationship, showEmail, showAddress, showAgeForDead, 
+				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
 		
 		//This makes sure that also the alignment of the additional lines at 
 		//the very end of a branch are correct
@@ -113,7 +119,7 @@ public class FamilytreeHTMLPrinter
 		
 		sb.append(printBuilder.getId(indi, "<b>", "</b> "));	
 
-		if (Sex.MALE.getValue().equals(indi.getSex())) {
+		if (Sex.MALE.equals(indi.getSex())) {
 			//Male
 			sb.append(printBuilder.getGender(indi, String.valueOf((char)0x2642), String.valueOf((char)0x2640), "<span style='color:#6666FF;' title='Male'>", "</span> "));
 		} else {
@@ -134,7 +140,7 @@ public class FamilytreeHTMLPrinter
 					sb.append("Divorced");
 					sb.append(" (was married to: ");
 					sb.append(printBuilder.getFirstName(partner, "", " "));
-					sb.append(printBuilder.getLastName(partner, "", ""));
+					sb.append(printBuilder.getMaidenName(partner, "", "", true));
 					sb.append(")");
 				} else if (relationship.indexOf(String.valueOf((char)0x26AF)) != -1) {
 					sb.append("<span class='relationship' style='color:#858585;' title='");
@@ -150,9 +156,39 @@ public class FamilytreeHTMLPrinter
 			}
 		}
 		
+		
 		sb.append(printBuilder.getFirstName(indi, "", " "));
-		sb.append(printBuilder.getLastName(indi, "", " "));
-		sb.append(printBuilder.getMarriedName(indi, family, "(", ") "));
+		
+		String married = printBuilder.getMarriedName(indi, family, "", " ", true).toString();
+		String maiden = printBuilder.getMaidenName(indi, "", "", true).toString();
+		
+		if (!printBuilder.showMarriedName()) {
+			if (maiden.length() > 0) {
+				//Clear the married name only if there is a maiden name
+				married = "";
+			}
+		}
+		if (!printBuilder.showMaidenName()) {
+			if (married.length() > 0) {
+				//Clear the maiden name only if there is a maiden name
+				maiden = "";
+			}
+		}
+		
+		sb.append(married);
+		
+		if (married.length() == 0) {
+			//If there is no married name, use the last name
+			sb.append(maiden);
+			sb.append(" ");
+		} else {
+			//If there is a married name, also add the last name if there is one
+			if (maiden.length() > 0) {
+				sb.append("(");
+				sb.append(maiden);
+				sb.append(") ");
+			}
+		}
 		
 		StringBuilder birthDate = printBuilder.getBirthDate(indi, String.valueOf((char)0x274A), "");
 		
@@ -186,7 +222,12 @@ public class FamilytreeHTMLPrinter
 		StringBuilder sb = new StringBuilder();
 		
 		//A little space in front of the additional line
-		sb.append(HTMLSPACE + HTMLSPACE + HTMLSPACE);
+		sb.append(FamilytreeTextPrinter.createColumnString(printBuilder.getId((isPartner ? partner : indi), "", "").length(), HTMLSPACE));
+		
+		if (isPartner) {
+			//Move the additional line of the partner to the right so that it lines up (about) the same
+			sb.append(FamilytreeTextPrinter.createColumnString(printBuilder.getId(indi, "", "").length() + 2, HTMLSPACE));
+		}
 		
 		StringBuilder email = printBuilder.getEmail(indi, (char)0x2709 + " ", " ");
 		StringBuilder address = null;
