@@ -110,7 +110,7 @@ public class FamilyTreeNode
 	 * @return
 	 */
 	public GedcomToFamilytreeIndividual[] getIndividuals() {
-		return super.getNodeValue();
+		return getNodeValue();
 	}
 	
 	@Override
@@ -159,7 +159,7 @@ public class FamilyTreeNode
 		GedcomCreatorFamily family = printBuilder.getFamily(parent1, parent2);
 				
 		//If divorced and there are no children...
-		if (family.getDivorced() && family.getNumberOfChildren() == 0) {
+		if (family.isDivorced() && family.getNumberOfChildren() == 0) {
 			FamilyTreeNode node = (FamilyTreeNode) getParentNode().getChildNode(0);
 			FamilyTreeNode lastNode = node;
 			
@@ -178,7 +178,7 @@ public class FamilyTreeNode
 					GedcomCreatorFamily nodeFamily = printBuilder.getFamily(parents[0], parents[1]);
 					
 					//Not divorced families and families with children will be printed anyways
-					if (!nodeFamily.getDivorced() || family.getNumberOfChildren() > 0) {
+					if (!nodeFamily.isDivorced() || family.getNumberOfChildren() > 0) {
 						hasPrintable = true;
 						break;
 					}
