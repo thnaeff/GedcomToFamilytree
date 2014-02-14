@@ -366,9 +366,9 @@ public class GedcomToFamilytree {
 		families.put(famXRef, family);
 		
 		
-		if (family.getNumberOfChildLines("HUSB") > 0) {
+		if (fam.getNumberOfChildLines("HUSB") > 0) {
 			//There can only be one HUSB line
-			String husbXRef = family.getChildLine("HUSB", 0).getTagLineXRef();
+			String husbXRef = fam.getChildLine("HUSB", 0).getTagLineXRef();
 			
 			if (!familiesAsParent.containsKey(husbXRef)) {
 				familiesAsParent.put(husbXRef, new HashMap<String, GedcomNode>());
@@ -377,9 +377,9 @@ public class GedcomToFamilytree {
 			familiesAsParent.get(husbXRef).put(famXRef, family);
 		}
 		
-		if (family.getNumberOfChildLines("WIFE") > 0) {
+		if (fam.getNumberOfChildLines("WIFE") > 0) {
 			//There can only be one WIVE line
-			String wiveXRef = family.getChildLine("WIFE", 0).getTagLineXRef();
+			String wiveXRef = fam.getChildLine("WIFE", 0).getTagLineXRef();
 			
 			if (!familiesAsParent.containsKey(wiveXRef)) {
 				familiesAsParent.put(wiveXRef, new HashMap<String, GedcomNode>());
@@ -389,8 +389,8 @@ public class GedcomToFamilytree {
 		}
 		
 		//Children
-		for (int i = 0; i < family.getNumberOfChildLines("CHIL"); i++) {
-			String chilXRef = family.getChildLine("CHIL", i).getTagLineXRef();
+		for (int i = 0; i < fam.getNumberOfChildLines("CHIL"); i++) {
+			String chilXRef = fam.getChildLine("CHIL", i).getTagLineXRef();
 			
 			if (!familiesAsChild.containsKey(chilXRef)) {
 				familiesAsChild.put(chilXRef, new HashMap<String, GedcomNode>());
@@ -528,13 +528,15 @@ public class GedcomToFamilytree {
 	 */
 	private GedcomNode searchForNode(GedcomNode startNode, String tagOrStructureName) {
 		
-		if (startNode.getNodeLine().isStructureLine()) {
-			if (startNode.getNodeLine().getAsStructureLine().getStructureName().equals(tagOrStructureName)) {
-				return startNode;
-			}
-		} else {
-			if (startNode.getNodeLine().getAsTagLine().getTag().equals(tagOrStructureName)) {
-				return startNode;
+		if (startNode.getNodeLine() != null) {
+			if (startNode.getNodeLine().isStructureLine()) {
+				if (startNode.getNodeLine().getAsStructureLine().getStructureName().equals(tagOrStructureName)) {
+					return startNode;
+				}
+			} else {
+				if (startNode.getNodeLine().getAsTagLine().getTag().equals(tagOrStructureName)) {
+					return startNode;
+				}
 			}
 		}
 		
