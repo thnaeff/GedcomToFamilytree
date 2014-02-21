@@ -246,7 +246,7 @@ public class FamilyTreePrintBuilder {
 				if (birthDate == null || birthDate.length() == 0) {
 					sb.append("?");
 				} else {
-					sb.append(df.format(GedcomFormatter.getDate(birthDate)));
+					sb.append(df.format(GedcomFormatter.getDateFromGedcom(birthDate)));
 				}
 				
 				sb.append(postfix);
@@ -279,7 +279,7 @@ public class FamilyTreePrintBuilder {
 				if (deathDate == null || deathDate.length() == 0) {
 					sb.append("?");
 				} else {
-					sb.append(df.format(GedcomFormatter.getDate(deathDate)));
+					sb.append(df.format(GedcomFormatter.getDateFromGedcom(deathDate)));
 				}
 				
 				sb.append(postfix);
@@ -309,8 +309,8 @@ public class FamilyTreePrintBuilder {
 				
 				//Age of dead individual
 				sb.append(GedcomHelper.getAge(
-						GedcomFormatter.getDate(indi.getBirthDate()), 
-						GedcomFormatter.getDate(indi.getDeathDate())));
+						GedcomFormatter.getDateFromGedcom(indi.getBirthDate()), 
+						GedcomFormatter.getDateFromGedcom(indi.getDeathDate())));
 				
 				sb.append(postfix);
 			}

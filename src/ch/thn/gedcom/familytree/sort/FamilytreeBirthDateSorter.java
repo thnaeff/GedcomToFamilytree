@@ -58,7 +58,7 @@ public class FamilytreeBirthDateSorter implements FamilyTreeSorter {
 		}
 		
 		//Sort by birth date
-		int beforeOrAfter = GedcomHelper.isBeforeOrAfter(GedcomFormatter.getDate(indi1.getBirthDate()), GedcomFormatter.getDate(indi2.getBirthDate()));
+		int beforeOrAfter = GedcomHelper.isBeforeOrAfter(GedcomFormatter.getDateFromGedcom(indi1.getBirthDate()), GedcomFormatter.getDateFromGedcom(indi2.getBirthDate()));
 		
 		if (oldToYoung) {
 			return (-1) * beforeOrAfter;

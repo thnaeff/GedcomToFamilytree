@@ -54,8 +54,8 @@ public class GedcomToFamilytreeTest {
 		indi1.setSex(Sex.MALE);
 		indi1.addName("HusbandName1", new String[] {"Husband"});
 		indi1.addName("MarriedName1", NameType.MARRIED, new String[] {"Husband"});
-		indi1.setBirth(true, GedcomFormatter.getDate(new Date()));
-		indi1.setDeath(true, GedcomFormatter.getDate(new Date()));
+		indi1.setBirth(true, GedcomFormatter.getGedcomDate(new Date(), true, true));
+		indi1.setDeath(true, GedcomFormatter.getGedcomDate(new Date(), true, true));
 		indi1.addAddress("Strasse", null, null, null, null, null, new String[] {"something@gmail.com"}, null, null);
 		indi1.addSpouseLink("F1");
 		indi1.addSpouseLink("F3");
@@ -88,7 +88,7 @@ public class GedcomToFamilytreeTest {
 		fam1.addChildLink("I3");
 		fam1.addChildLink("I4");
 		fam1.addChildLink("I8");
-		fam1.setMarried(true, GedcomFormatter.getDate(new Date()));
+		fam1.setMarried(true, GedcomFormatter.getGedcomDate(new Date(), true, true));
 //		System.out.println(fam1.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		
