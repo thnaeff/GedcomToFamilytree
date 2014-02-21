@@ -16,7 +16,6 @@
  */
 package ch.thn.gedcom.familytree.printer;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import ch.thn.gedcom.GedcomFormatter;
@@ -43,9 +42,7 @@ public class FamilyTreePrintBuilder {
 
 	
 	private GedcomToFamilytree toFamilyTree = null;
-	
-	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-	
+		
 	private boolean showId = true;
 	private boolean showGender = true;
 	private boolean showRelationship = true;
@@ -246,7 +243,7 @@ public class FamilyTreePrintBuilder {
 				if (birthDate == null || birthDate.length() == 0) {
 					sb.append("?");
 				} else {
-					sb.append(df.format(GedcomFormatter.getDateFromGedcom(birthDate)));
+					sb.append(birthDate);
 				}
 				
 				sb.append(postfix);
@@ -279,7 +276,7 @@ public class FamilyTreePrintBuilder {
 				if (deathDate == null || deathDate.length() == 0) {
 					sb.append("?");
 				} else {
-					sb.append(df.format(GedcomFormatter.getDateFromGedcom(deathDate)));
+					sb.append(deathDate);
 				}
 				
 				sb.append(postfix);
