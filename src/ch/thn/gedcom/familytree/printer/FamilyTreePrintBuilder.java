@@ -40,6 +40,9 @@ public class FamilyTreePrintBuilder {
 	
 	protected static final String SPACE = " ";
 
+	public static final String dateFormatYear = "yyyy";
+	public static final String dateFormatYearMonth = "MM.yyyy";
+	public static final String dateFormatYearMonthDay = "dd.MM.yyyy";
 	
 	private GedcomToFamilytree toFamilyTree = null;
 		
@@ -243,7 +246,7 @@ public class FamilyTreePrintBuilder {
 				if (birthDate == null || birthDate.length() == 0) {
 					sb.append("?");
 				} else {
-					sb.append(birthDate);
+					sb.append(GedcomFormatter.convertGedcomDate(birthDate, dateFormatYear, dateFormatYearMonth, dateFormatYearMonthDay));
 				}
 				
 				sb.append(postfix);
@@ -276,7 +279,7 @@ public class FamilyTreePrintBuilder {
 				if (deathDate == null || deathDate.length() == 0) {
 					sb.append("?");
 				} else {
-					sb.append(deathDate);
+					sb.append(GedcomFormatter.convertGedcomDate(deathDate, dateFormatYear, dateFormatYearMonth, dateFormatYearMonthDay));
 				}
 				
 				sb.append(postfix);
