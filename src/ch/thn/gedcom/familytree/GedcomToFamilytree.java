@@ -124,6 +124,15 @@ public class GedcomToFamilytree {
 	}
 	
 	/**
+	 * Returns the family tree structure (the first node of the tree).
+	 * 
+	 * @return
+	 */
+	public FamilyTree getFamilyTree() {
+		return familyTree;
+	}
+	
+	/**
 	 * Sorts the children and all their children.
 	 * 
 	 * @param children

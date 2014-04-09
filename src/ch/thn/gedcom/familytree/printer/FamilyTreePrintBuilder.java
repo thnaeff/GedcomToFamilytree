@@ -196,7 +196,8 @@ public class FamilyTreePrintBuilder {
 	
 	
 	/**
-	 * 
+	 * Returns only the ID of the individual and removes any individual-id-prefix 
+	 * {@link GedcomToFamilytree#indiXRefPrefix}.
 	 * 
 	 * @param indi
 	 * @param prefix

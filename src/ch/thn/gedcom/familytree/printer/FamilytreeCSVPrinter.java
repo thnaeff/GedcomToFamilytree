@@ -196,40 +196,16 @@ public class FamilytreeCSVPrinter
 			//Align the header over the actual data by creating empty cells 
 			//over the connector lines
 			for (int i = 0; i < preparedTrees.get(0).getHightestNodeLevel(); i++) {
-				sb.append(DELIMITER);
+				sb.append("L_" + i + DELIMITER);
 			}
 		}
 		
-		sb.append("id");
-		sb.append(DELIMITER);
-		sb.append("gender");
-		sb.append(DELIMITER);
-		sb.append("civil_status");
-		sb.append(DELIMITER);
-		sb.append("name");
-		sb.append(DELIMITER);
-		sb.append("middle_names");
-		sb.append(DELIMITER);
-		sb.append("maiden_name");
-		sb.append(DELIMITER);
-		sb.append("married_name");
-		sb.append(DELIMITER);
-		sb.append("birth_date");
-		sb.append(DELIMITER);
-		sb.append("death_date");
-		sb.append(DELIMITER);
-		sb.append("email");
-		sb.append(DELIMITER);
-		sb.append("street1");	
-		sb.append(DELIMITER);
-		sb.append("street2");	
-		sb.append(DELIMITER);
-		sb.append("post");	
-		sb.append(DELIMITER);
-		sb.append("city");	
-		sb.append(DELIMITER);
-		sb.append("country");	
-		sb.append(DELIMITER);
+		ArrayList<String> header = getCSVHeader();
+		
+		for (String s : header) {
+			sb.append(s);
+			sb.append(DELIMITER);
+		}
 		
 		sb.append(TreePrinter.LINE_SEPARATOR);
 		
@@ -238,5 +214,33 @@ public class FamilytreeCSVPrinter
 		return sb;
 	}
 
+	/**
+	 * This method has to create the headers for the table. The headers have 
+	 * to appear in the order of the columns.
+	 * 
+	 * @return
+	 */
+	protected ArrayList<String> getCSVHeader() {
+		ArrayList<String> header = new ArrayList<String>(15);
+		
+		header.add("id");
+		header.add("gender");
+		header.add("civil_status");
+		header.add("name");
+		header.add("middle_names");
+		header.add("maiden_name");
+		header.add("married_name");
+		header.add("birth_date");
+		header.add("death_date");
+		header.add("email");
+		header.add("street1");	
+		header.add("street2");	
+		header.add("post");	
+		header.add("city");	
+		header.add("country");	
+		
+		return header;
+		
+	}
 	
 }
