@@ -153,7 +153,7 @@ public class GedcomToFamilytreeTest {
 		toFamilyTree.buildFamilyTree("I1");
 //		FamilyTree familyTree = toFamilyTree.buildFamilyTree("GedcomToFamilytree Test-Tree", "I1");
 		
-		System.out.println(toFamilyTree.printTextFamilyTree(true, true, true, true, true, true, true, true, true, true, true, true, true));
+		System.out.println(toFamilyTree.printTextFamilyTree(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
 		
 //		System.out.println(toFamilyTree.printHtmlFamilyTree("Test GedcomToFamilyTree", true, true, true, true, true, true, true, true, true, true));
 //		System.out.println(toFamilyTree.printHorizontalHtmlFamilyTree("Test Horizontal GedcomToFamilyTree", true, true, true, true, true, true, true, true, true, true, 200));

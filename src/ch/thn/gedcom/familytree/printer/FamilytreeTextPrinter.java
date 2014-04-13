@@ -37,10 +37,13 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	
 	private FamilyTreePrintBuilder printBuilder = null;
 	
+	boolean addNodeSpace = false;
+	
 	/**
 	 * 
 	 * 
 	 * @param toFamilyTree
+	 * @param addNodeSpace
 	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
@@ -55,12 +58,14 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	 * @param showDivorcedPartnerWithoutChildren
 	 * @param showDivorcedPartnerWithChildren
 	 */
-	public FamilytreeTextPrinter(GedcomToFamilytree toFamilyTree, boolean showId, 
+	public FamilytreeTextPrinter(GedcomToFamilytree toFamilyTree, boolean addNodeSpace, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
 			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		super(true, true, true, false);
+		
+		this.addNodeSpace = addNodeSpace;
 		
 		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
 				showRelationship, showEmail, showAddress, showAgeForDead, 
@@ -77,7 +82,7 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	@Override
 	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
 		
-		return printBuilder.createNodeValueLines(node, this, true, false);
+		return printBuilder.createNodeValueLines(node, this, addNodeSpace, false);
 	
 	}
 	

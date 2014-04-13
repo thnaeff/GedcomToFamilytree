@@ -642,7 +642,7 @@ public class FamilyTreePrintBuilder {
 	 * 
 	 * @param currentNode
 	 * @param printer
-	 * @param addEmptyLineAtEnd
+	 * @param addEmptyLineAtEnd Adds an empty line after each node
 	 * @param replaceNullValue Replace <code>null</code> values with an empty value
 	 * @return
 	 */

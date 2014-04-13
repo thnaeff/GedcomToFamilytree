@@ -41,12 +41,15 @@ public class FamilytreeHTMLPrinter
 	private static final String HTMLSPACE = "&nbsp;";
 	
 	private FamilyTreePrintBuilder printBuilder = null;
+	
+	boolean addNodeSpace = false;
 		
 	/**
 	 * 
 	 * 
 	 * @param toFamilyTree
 	 * @param useColors
+	 * @param addNodeSpace
 	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
@@ -62,12 +65,14 @@ public class FamilytreeHTMLPrinter
 	 * @param showDivorcedPartnerWithChildren
 	 */
 	public FamilytreeHTMLPrinter(GedcomToFamilytree toFamilyTree, 
-			boolean useColors, boolean showId, 
+			boolean useColors, boolean addNodeSpace, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
 			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		super(true, true, useColors, true, false);
+		
+		this.addNodeSpace = addNodeSpace;
 		
 		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
 				showRelationship, showEmail, showAddress, showAgeForDead, 
@@ -89,7 +94,7 @@ public class FamilytreeHTMLPrinter
 	@Override
 	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
 		
-		return printBuilder.createNodeValueLines(node, this, true, true);
+		return printBuilder.createNodeValueLines(node, this, addNodeSpace, true);
 		
 	}
 	
@@ -249,7 +254,7 @@ public class FamilytreeHTMLPrinter
 			//This only happens to the last line because it only happens if there is 
 			//no character in front of the bullet point
 			//It happens in the Eclipse Console output and gedit
-			address = printBuilder.getAddress(indi, (char)0x25AA + " ", " ");
+			address = printBuilder.getAddress(indi, "<span style='color:gray;'>" + (char)0x25AA + "</span> ", " ");
 		}
 		
 		if (email.length() > 0 || (withAddress && address.length() > 0)) {
