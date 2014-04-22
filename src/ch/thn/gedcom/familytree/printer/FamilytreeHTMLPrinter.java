@@ -43,6 +43,7 @@ public class FamilytreeHTMLPrinter
 	private FamilyTreePrintBuilder printBuilder = null;
 	
 	boolean addNodeSpace = false;
+	boolean showLightDates = true;
 		
 	/**
 	 * 
@@ -50,6 +51,7 @@ public class FamilytreeHTMLPrinter
 	 * @param toFamilyTree
 	 * @param useColors
 	 * @param addNodeSpace
+	 * @param showLightDates
 	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
@@ -65,7 +67,7 @@ public class FamilytreeHTMLPrinter
 	 * @param showDivorcedPartnerWithChildren
 	 */
 	public FamilytreeHTMLPrinter(GedcomToFamilytree toFamilyTree, 
-			boolean useColors, boolean addNodeSpace, boolean showId, 
+			boolean useColors, boolean addNodeSpace, boolean showLightDates, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
@@ -73,6 +75,7 @@ public class FamilytreeHTMLPrinter
 		super(true, true, useColors, true, false);
 		
 		this.addNodeSpace = addNodeSpace;
+		this.showLightDates = showLightDates;
 		
 		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
 				showRelationship, showEmail, showAddress, showAgeForDead, 
@@ -200,7 +203,7 @@ public class FamilytreeHTMLPrinter
 		if (birthDate.length() > 0) {
 			StringBuilder deathDate = printBuilder.getDeathDate(indi, String.valueOf((char)0x271D), "");
 			
-			sb.append("<span style='color:#848484;'>");
+			sb.append("<span " + (showLightDates ? "style='color:#848484;'" : "") + ">");
 			sb.append("[");
 			sb.append(birthDate);
 		

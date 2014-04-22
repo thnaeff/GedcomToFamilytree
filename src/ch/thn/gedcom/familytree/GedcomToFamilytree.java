@@ -645,6 +645,7 @@ public class GedcomToFamilytree {
 	 * @param treeTitle
 	 * @param useColors
 	 * @param addNodeSpace
+	 * @param showLightDates
 	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
@@ -661,7 +662,7 @@ public class GedcomToFamilytree {
 	 * @return
 	 */
 	public StringBuilder printHtmlFamilyTree(String treeTitle, 
-			boolean useColors, boolean addNodeSpace, boolean showId, 
+			boolean useColors, boolean addNodeSpace, boolean showLightDates, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
@@ -670,7 +671,7 @@ public class GedcomToFamilytree {
 		StringBuilder sb = new StringBuilder();
 		
 		if (htmlPrinter == null) {
-			htmlPrinter = new FamilytreeHTMLPrinter(this, useColors, addNodeSpace, showId, 
+			htmlPrinter = new FamilytreeHTMLPrinter(this, useColors, addNodeSpace, showLightDates, showId, 
 					showGender, showRelationship, showEmail, showAddress, showAgeForDead, 
 					showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
 					showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
@@ -774,6 +775,7 @@ public class GedcomToFamilytree {
 	 * @param treeTitle
 	 * @param useColors
 	 * @param addNodeSpace
+	 * @param showLightDates
 	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
@@ -790,7 +792,7 @@ public class GedcomToFamilytree {
 	 * @throws IOException
 	 */
 	public void writeHTMLFamilyTree(String targetFile, String treeTitle, 
-			boolean useColors, boolean addNodeSpace, boolean showId, 
+			boolean useColors, boolean addNodeSpace, boolean showLightDates, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
@@ -801,7 +803,7 @@ public class GedcomToFamilytree {
 		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile), "UTF-8"));
 		
 		//Writes all at once as string
-		output.write(printHtmlFamilyTree(treeTitle, useColors, addNodeSpace, showId, showGender, 
+		output.write(printHtmlFamilyTree(treeTitle, useColors, addNodeSpace, showLightDates, showId, showGender, 
 				showRelationship, showEmail, showAddress, showAgeForDead, 
 				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
 				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren).toString());
