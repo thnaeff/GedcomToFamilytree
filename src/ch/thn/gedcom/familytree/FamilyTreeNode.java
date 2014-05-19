@@ -17,45 +17,18 @@
 package ch.thn.gedcom.familytree;
 
 
-import java.util.Comparator;
-import java.util.LinkedList;
-
-import ch.thn.gedcom.creator.GedcomCreatorFamily;
-import ch.thn.gedcom.familytree.printer.FamilyTreePrintBuilder;
-import ch.thn.gedcom.familytree.printer.FamilytreePrinter;
-import ch.thn.util.tree.TreeNodeException;
-import ch.thn.util.tree.printable.GenericPrintableTreeNode;
-import ch.thn.util.tree.printable.TreePrinter;
+import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.util.tree.onoff.core.AbstractGenericOnOffKeyTreeNode;
 
 /**
  *
  * @author Thomas Naeff (github.com/thnaeff)
  *
  */
-public class FamilyTreeNode 
-	extends GenericPrintableTreeNode<String, GedcomToFamilytreeIndividual[], FamilyTreeNode> {
+public class FamilyTreeNode
+	extends AbstractGenericOnOffKeyTreeNode<String, GedcomIndividual[], FamilyTreeNode> {
 	
-	/**
-	 * 
-	 * 
-	 * @param key
-	 * @param value
-	 */
-	protected FamilyTreeNode(String key, GedcomToFamilytreeIndividual[] value) {
-		super(key, value);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param parent
-	 * @param key
-	 * @param value
-	 */
-	protected FamilyTreeNode(FamilyTreeNode parent, String key, GedcomToFamilytreeIndividual[] value) {
-		super(parent, key, value);
-	}
-	
+
 	/**
 	 * 
 	 * 
@@ -63,152 +36,58 @@ public class FamilyTreeNode
 	 * @param parent1 The parent which is the child of the parents of this family
 	 * @param parent2 The partner of parent1
 	 */
-	public FamilyTreeNode(String key, GedcomToFamilytreeIndividual parent1, 
-			GedcomToFamilytreeIndividual parent2) {
-		super(key, new GedcomToFamilytreeIndividual[] {parent1, parent2});
+	public FamilyTreeNode(String key, GedcomIndividual parent1, 
+			GedcomIndividual parent2) {
+		super(key, new GedcomIndividual[] {parent1, parent2});
+	}
+	
+	/**
+	 * @param key
+	 * @param value
+	 */
+	public FamilyTreeNode(String key, GedcomIndividual[] value) {
+		super(key, value);
+	}
+	
+	/**
+	 * @param key
+	 * @param value
+	 */
+	protected FamilyTreeNode(GedcomIndividual[] value) {
+		super(value);
+	}
+
+	/**
+	 * @param node
+	 */
+	protected FamilyTreeNode(FamilyTreeNode node) {
+		super(node);
 	}
 	
 	@Override
-	protected FamilyTreeNode nodeFactory(String key,
-			GedcomToFamilytreeIndividual[] value) {
+	public FamilyTreeNode nodeFactory(String key, GedcomIndividual[] value) {
 		return new FamilyTreeNode(key, value);
 	}
 
-
 	@Override
-	protected FamilyTreeNode nodeFactory(FamilyTreeNode parent, String key,
-			GedcomToFamilytreeIndividual[] value) {
-		return  new FamilyTreeNode(parent, key, value);
+	public FamilyTreeNode nodeFactory(GedcomIndividual[] value) {
+		return new FamilyTreeNode(value);
 	}
 
+	@Override
+	public FamilyTreeNode nodeFactory(FamilyTreeNode node) {
+		return new FamilyTreeNode(node);
+	}
 
 	@Override
-	protected FamilyTreeNode getThis() {
+	protected FamilyTreeNode internalGetThis() {
 		return this;
 	}
 	
 	@Override
-	protected LinkedList<FamilyTreeNode> getChildNodes() {
-		return super.getChildNodes();
+	public String toString() {
+		GedcomIndividual[] individuals = getNodeValue();
+		return getNodeKey() + ": " + individuals[0] + ", " + individuals[1];
 	}
-	
-	@Override
-	protected FamilyTreeNode addChildNode(FamilyTreeNode childNode)
-			throws TreeNodeException {
-		return super.addChildNode(childNode);
-	}
-	
-	@Override
-	protected void sortChildNodesByValue(
-			Comparator<FamilyTreeNode> childValueSorter) {
-		super.sortChildNodesByValue(childValueSorter);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	public GedcomToFamilytreeIndividual[] getIndividuals() {
-		return getNodeValue();
-	}
-	
-	@Override
-	public boolean printNode(
-			TreePrinter<String, GedcomToFamilytreeIndividual[], ?, ?, ?> printer) {
-		FamilyTreePrintBuilder printBuilder = null;
-		
-		if (printer instanceof FamilytreePrinter) {
-			printBuilder = ((FamilytreePrinter)printer).getPrintBuilder();
-		} else {
-			throw new GedcomToFamilytreeError("Can not determine if family should be " +
-					"printed or not if a printer other than a " + 
-					FamilytreePrinter.class.getSimpleName() + " is used.");
-		}
-		
-		GedcomToFamilytreeIndividual[] parents = getNodeValue();
-
-		if (!printFamily(printBuilder, parents[0], parents[1])) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param printBuilder
-	 * @param parent1
-	 * @param parent2
-	 * @return
-	 */
-	private boolean printFamily(FamilyTreePrintBuilder printBuilder, 
-			GedcomToFamilytreeIndividual parent1, GedcomToFamilytreeIndividual parent2) {
-		
-		//Print always if no family exists
-		if (parent1 == null || parent2 == null) {
-			return true;
-		}
-		
-		GedcomCreatorFamily family = printBuilder.getFamily(parent1, parent2);
-				
-		//If divorced and there are no children...
-		if (family.isDivorced() && family.getNumberOfChildren() == 0) {
-			FamilyTreeNode node = (FamilyTreeNode) getParentNode().getChildNode(0);
-			FamilyTreeNode lastNode = node;
-			
-			boolean hasPrintable = false;
-			int familiesCount = 0;
-			
-			//Look for a family with the same parent1 which is not divorced or 
-			//which is divorced but has children
-			while (node != null) {
-				GedcomToFamilytreeIndividual[] parents = node.getNodeValue();
-				
-				//Family with same parent1?
-				if (parent1.getId().equals(parents[0].getId())) {
-					familiesCount++;
-					
-					GedcomCreatorFamily nodeFamily = printBuilder.getFamily(parents[0], parents[1]);
-					
-					//Not divorced families and families with children will be printed anyways
-					if (!nodeFamily.isDivorced() || family.getNumberOfChildren() > 0) {
-						hasPrintable = true;
-						break;
-					}
-				}
-				
-				lastNode = node;
-				
-				node = (FamilyTreeNode) node.getNextNode();
-			}
-			
-			if (hasPrintable) {
-				//There is another family with the same parent1 but they are not 
-				//divorced or there are ones with children and will be printed anyways, 
-				//so do not print this divorced family without children
-				return false;
-			} else {
-				//There is no family which will be printed anyways
-				
-				if (familiesCount == 1) {
-					//There is only one (this) family with the same parent1 -> print it
-					return true;
-				} else {
-					//There is more than one family with the same parent1 -> only print the last one
-					if (this.equals(lastNode)) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-			}
-			
-		}
-		
-		return true;
-	}
-	
 
 }

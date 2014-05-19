@@ -18,8 +18,9 @@ package ch.thn.gedcom.familytree.printer;
 
 import java.util.ArrayList;
 
-import ch.thn.gedcom.creator.GedcomCreatorFamily;
-import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
+import ch.thn.gedcom.creator.GedcomFamily;
+import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.familytree.GedcomToFamilyTree;
 
 /**
  *
@@ -28,12 +29,14 @@ import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
  */
 public interface FamilytreePrinter {
 	
+	
 	/**
 	 * 
 	 * 
+	 * @param toFamilyTree
 	 * @return
 	 */
-	public FamilyTreePrintBuilder getPrintBuilder();
+	public StringBuilder print(GedcomToFamilyTree toFamilyTree);
 	
 	/**
 	 * 
@@ -44,8 +47,8 @@ public interface FamilytreePrinter {
 	 * @param isPartner
 	 * @return
 	 */
-	public ArrayList<String> createPrimaryLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner);
+	public ArrayList<String> createPrimaryLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner);
 
 	/**
 	 * 
@@ -56,7 +59,7 @@ public interface FamilytreePrinter {
 	 * @param isPartner
 	 * @return
 	 */
-	public ArrayList<String> createAdditionalLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner);
+	public ArrayList<String> createAdditionalLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner);
 	
 }

@@ -18,16 +18,17 @@ package ch.thn.gedcom.familytree.printer;
 
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import ch.thn.gedcom.creator.GedcomCreatorFamily;
-import ch.thn.gedcom.creator.GedcomCreatorEnums.Sex;
+import ch.thn.gedcom.creator.GedcomFamily;
+import ch.thn.gedcom.creator.GedcomEnums.Sex;
+import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.familytree.FamilyTree;
 import ch.thn.gedcom.familytree.FamilyTreeNode;
-import ch.thn.gedcom.familytree.GedcomToFamilytree;
-import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
-import ch.thn.util.tree.printable.TreePrinter;
-import ch.thn.util.tree.printable.printer.TextTreePrinterLines;
-import ch.thn.util.tree.printable.printer.TreePrinterNode;
-import ch.thn.util.tree.printable.printer.vertical.GenericVerticalHTMLTreePrinter;
+import ch.thn.gedcom.familytree.GedcomToFamilyTree;
+import ch.thn.util.tree.onoff.OnOffTreeUtil;
+import ch.thn.util.tree.printer.html.HTMLTreePrinter;
+import ch.thn.util.tree.printer.text.TextTreePrinterLines;
 
 /**
  * 
@@ -36,11 +37,13 @@ import ch.thn.util.tree.printable.printer.vertical.GenericVerticalHTMLTreePrinte
  *
  */
 public class FamilytreeHTMLPrinter 
-	extends GenericVerticalHTMLTreePrinter<String, GedcomToFamilytreeIndividual[], FamilyTreeNode> implements FamilytreePrinter {
+	extends HTMLTreePrinter<GedcomIndividual[], FamilyTreeNode> implements FamilytreePrinter {
 	
 	private static final String HTMLSPACE = "&nbsp;";
 	
 	private FamilyTreePrintBuilder printBuilder = null;
+	
+	private GedcomToFamilyTree toFamilyTree = null;
 	
 	boolean addNodeSpace = false;
 	boolean showLightDates = true;
@@ -48,7 +51,6 @@ public class FamilytreeHTMLPrinter
 	/**
 	 * 
 	 * 
-	 * @param toFamilyTree
 	 * @param useColors
 	 * @param addNodeSpace
 	 * @param showLightDates
@@ -66,18 +68,18 @@ public class FamilytreeHTMLPrinter
 	 * @param showDivorcedPartnerWithoutChildren
 	 * @param showDivorcedPartnerWithChildren
 	 */
-	public FamilytreeHTMLPrinter(GedcomToFamilytree toFamilyTree, 
+	public FamilytreeHTMLPrinter( 
 			boolean useColors, boolean addNodeSpace, boolean showLightDates, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
 			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
-		super(true, true, useColors, true, false);
+		super(LeftRightTextPrinterMode.STANDARD_CONNECTTOFIRST, false, useColors);
 		
 		this.addNodeSpace = addNodeSpace;
 		this.showLightDates = showLightDates;
 		
-		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
+		printBuilder = new FamilyTreePrintBuilder(showId, showGender, 
 				showRelationship, showEmail, showAddress, showAgeForDead, 
 				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
 				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
@@ -89,38 +91,51 @@ public class FamilytreeHTMLPrinter
 	}
 	
 	@Override
-	public FamilyTreePrintBuilder getPrintBuilder() {
-		return printBuilder;
+	public StringBuilder print(FamilyTreeNode printNode) {
+		throw new UnsupportedOperationException("The method print(FamilyTreeNode) is not supported. " +
+				"Use print(GedcomToFamilyTree) instead.");
+	}
+	
+	@Override
+	public StringBuilder print(GedcomToFamilyTree toFamilyTree) {
+		this.toFamilyTree = toFamilyTree;
+		
+		LinkedList<FamilyTreeNode> trees = OnOffTreeUtil.convertToSimpleTree(toFamilyTree.getFamilyTree().getFirstSibling(), true, true);
+		
+		StringBuilder sb = new StringBuilder();
+		for (FamilyTreeNode tree : trees) {
+			if (sb.length() > 0) {
+				//Keep trees separated a little
+				sb.append("<p></p>");
+			}
+			sb.append(super.print(tree));
+		}
+		
+		return sb;
 	}
 	
 	
 	@Override
 	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
 		
-		return printBuilder.createNodeValueLines(node, this, addNodeSpace, true);
+		if (node instanceof FamilyTree) {
+			TextTreePrinterLines lines = new TextTreePrinterLines(false, true, null, "");
+			//Only the title
+			lines.addNewLine(((FamilyTree)node).getFamilyTreeTitle());
+			return lines;
+		}
+		
+		GedcomIndividual[] individuals = node.getNodeValue();
+		
+		return printBuilder.createNodeValueLines(individuals[0], individuals[1],  
+				toFamilyTree.getFamilyOfParents(individuals[0], individuals[1]), 
+				this, addNodeSpace, true);
 		
 	}
 	
 	@Override
-	protected void preProcessingNode(
-			TreePrinterNode<String, TextTreePrinterLines> printerNode,
-			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
-			boolean isHeadNode, boolean isFirstChildNode,
-			boolean isLastChildNode, boolean hasChildNodes) {
-	}
-
-	@Override
-	protected void postProcessingNode(
-			TreePrinterNode<String, TextTreePrinterLines> printerNode,
-			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
-			boolean isHeadNode, boolean isFirstChildNode,
-			boolean isLastChildNode, boolean hasChildNodes) {
-	}
-	
-	
-	@Override
-	public ArrayList<String> createPrimaryLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner) {
+	public ArrayList<String> createPrimaryLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		ArrayList<String> values = new ArrayList<String>(1);
 		
 		StringBuilder sb = new StringBuilder();
@@ -223,18 +238,18 @@ public class FamilytreeHTMLPrinter
 	}
 	
 	@Override
-	public ArrayList<String> createAdditionalLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner) {
+	public ArrayList<String> createAdditionalLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		ArrayList<String> values = new ArrayList<String>(7);
 		
 		StringBuilder sb = new StringBuilder();
 		
 		//A little space in front of the additional line
-		sb.append(FamilytreeTextPrinter.createColumnString(printBuilder.getId((isPartner ? partner : indi), "", "").length(), HTMLSPACE));
+		sb.append(createColumnString(printBuilder.getId((isPartner ? partner : indi), "", "").length(), HTMLSPACE));
 		
 		if (isPartner) {
 			//Move the additional line of the partner to the right so that it lines up (about) the same
-			sb.append(FamilytreeTextPrinter.createColumnString(printBuilder.getId(indi, "", "").length() + 2, HTMLSPACE));
+			sb.append(createColumnString(printBuilder.getId(indi, "", "").length() + 2, HTMLSPACE));
 		}
 		
 		StringBuilder email = printBuilder.getEmail(indi, (char)0x2709 + " ", " ");
@@ -286,14 +301,13 @@ public class FamilytreeHTMLPrinter
 	
 	@Override
 	protected void appendHeaderData(StringBuilder sb) {
+		super.appendHeaderData(sb);
 		
-		sb.append("<style>" + TreePrinter.LINE_SEPARATOR);
-//		sb.append("td {border:1px solid black}");
-		sb.append(".printer_table {border-spacing:0px; border-collapse:collapse;}" + TreePrinter.LINE_SEPARATOR);
-		sb.append(".printer_line {padding:0px; width:25px;}" + TreePrinter.LINE_SEPARATOR);
-		sb.append(".additionalinfo {font-style:italic;}" + TreePrinter.LINE_SEPARATOR);
-		sb.append(".relationship {vertical-align:bottom;}" + TreePrinter.LINE_SEPARATOR);
-		sb.append("</style>" + TreePrinter.LINE_SEPARATOR);
+		sb.append("<style>" + LINE_SEPARATOR);
+//		sb.append("td {border:1px dotted black}");
+		sb.append(".additionalinfo {font-style:italic;}" + LINE_SEPARATOR);
+		sb.append(".relationship {vertical-align:bottom;}" + LINE_SEPARATOR);
+		sb.append("</style>" + LINE_SEPARATOR);
 		
 	}
 	

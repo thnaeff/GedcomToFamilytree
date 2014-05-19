@@ -40,7 +40,7 @@ public class FamilyTree extends FamilyTreeNode {
 		
 		if (familyTreeTitle == null) {
 			//Do not show this node if there is no title
-			setInvisibleNode(true);
+			ignoreNode(true);
 		}
 	}
 	
@@ -50,6 +50,12 @@ public class FamilyTree extends FamilyTreeNode {
 	 * @return the familyTreeTitle
 	 */
 	public String getFamilyTreeTitle() {
+		return familyTreeTitle;
+	}
+	
+	
+	@Override
+	public String toString() {
 		return familyTreeTitle;
 	}
 	

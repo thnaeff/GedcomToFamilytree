@@ -17,16 +17,16 @@
 package ch.thn.gedcom.familytree.printer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import ch.thn.gedcom.creator.GedcomCreatorFamily;
+import ch.thn.gedcom.creator.GedcomFamily;
+import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.familytree.FamilyTree;
 import ch.thn.gedcom.familytree.FamilyTreeNode;
-import ch.thn.gedcom.familytree.GedcomToFamilytree;
-import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
-import ch.thn.util.tree.printable.TreePrinter;
-import ch.thn.util.tree.printable.printer.TextTreePrinterLines;
-import ch.thn.util.tree.printable.printer.TreePrinterNode;
-import ch.thn.util.tree.printable.printer.TreePrinterTree;
-import ch.thn.util.tree.printable.printer.vertical.GenericVerticalCSVTreePrinter;
+import ch.thn.gedcom.familytree.GedcomToFamilyTree;
+import ch.thn.util.tree.onoff.OnOffTreeUtil;
+import ch.thn.util.tree.printer.csv.CSVTreePrinter;
+import ch.thn.util.tree.printer.text.TextTreePrinterLines;
 
 /**
  * 
@@ -35,14 +35,16 @@ import ch.thn.util.tree.printable.printer.vertical.GenericVerticalCSVTreePrinter
  *
  */
 public class FamilytreeCSVPrinter 
-	extends GenericVerticalCSVTreePrinter<String, GedcomToFamilytreeIndividual[], FamilyTreeNode> implements FamilytreePrinter {
+	extends CSVTreePrinter<GedcomIndividual[], FamilyTreeNode> implements FamilytreePrinter {
 	
 	private FamilyTreePrintBuilder printBuilder = null;
-		
+	
+	private GedcomToFamilyTree toFamilyTree = null;
+	
+	
 	/**
 	 * 
 	 * 
-	 * @param toFamilyTree
 	 * @param alignValuesRight
 	 * @param showId
 	 * @param showGender
@@ -58,14 +60,14 @@ public class FamilytreeCSVPrinter
 	 * @param showDivorcedPartnerWithoutChildren
 	 * @param showDivorcedPartnerWithChildren
 	 */
-	public FamilytreeCSVPrinter(GedcomToFamilytree toFamilyTree, boolean alignValuesRight, 
+	public FamilytreeCSVPrinter(boolean alignValuesRight, 
 			boolean showId, boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
 			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
-		super(true, true, true, alignValuesRight, true);
+		super(LeftRightTextPrinterMode.STANDARD_CONNECTTOFIRST, alignValuesRight, true);
 		
-		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
+		printBuilder = new FamilyTreePrintBuilder(showId, showGender, 
 				showRelationship, showEmail, showAddress, showAgeForDead, 
 				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
 				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
@@ -73,36 +75,60 @@ public class FamilytreeCSVPrinter
 	}
 	
 	@Override
-	public FamilyTreePrintBuilder getPrintBuilder() {
-		return printBuilder;
+	public StringBuilder print(FamilyTreeNode printNode) {
+		throw new UnsupportedOperationException("The method print(FamilyTreeNode) is not supported. " +
+				"Use print(GedcomToFamilyTree) instead.");
+	}
+	
+	@Override
+	public StringBuilder print(GedcomToFamilyTree toFamilyTree) {
+		this.toFamilyTree = toFamilyTree;
+		
+		LinkedList<FamilyTreeNode> trees = OnOffTreeUtil.convertToSimpleTree(toFamilyTree.getFamilyTree().getFirstSibling(), true, true);
+		
+		StringBuilder sb = new StringBuilder();
+		for (FamilyTreeNode tree : trees) {
+			if (sb.length() > 0) {
+				//Keep trees separated a little
+				sb.append(LINE_SEPARATOR + LINE_SEPARATOR);
+			}
+			
+			sb.append(super.print(tree));
+		}
+		
+		return sb;
 	}
 	
 	@Override
 	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
+		if (node instanceof FamilyTree) {
+			TextTreePrinterLines lines = new TextTreePrinterLines(false, true, null, "");
+			//Only the title
+			lines.addNewLine(((FamilyTree)node).getFamilyTreeTitle());
+			return lines;
+		}
 		
-		return printBuilder.createNodeValueLines(node, this, false, true);
+		GedcomIndividual[] individuals = node.getNodeValue();
+		
+		return printBuilder.createNodeValueLines(individuals[0], individuals[1],  
+				toFamilyTree.getFamilyOfParents(individuals[0], individuals[1]), 
+				this, false, true);
 		
 	}
 	
 	@Override
-	protected void preProcessingNode(
-			TreePrinterNode<String, TextTreePrinterLines> printerNode,
-			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
-			boolean isHeadNode, boolean isFirstChildNode,
-			boolean isLastChildNode, boolean hasChildNodes) {
-	}
-
-	@Override
-	protected void postProcessingNode(
-			TreePrinterNode<String, TextTreePrinterLines> printerNode,
-			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
-			boolean isHeadNode, boolean isFirstChildNode,
-			boolean isLastChildNode, boolean hasChildNodes) {
+	protected void preProcessing(TextTreePrinterLines nodeData,
+			FamilyTreeNode nextNode) {
 	}
 	
 	@Override
-	public ArrayList<String> createPrimaryLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner) {
+	protected void postProcessing(TextTreePrinterLines nodeData,
+			FamilyTreeNode printedNode) {
+	}
+	
+	@Override
+	public ArrayList<String> createPrimaryLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		ArrayList<String> values = new ArrayList<String>(7);
 		
 		values.add(printBuilder.getId(indi, "", "").toString());
@@ -174,29 +200,40 @@ public class FamilytreeCSVPrinter
 	}
 	
 	@Override
-	public ArrayList<String> createAdditionalLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner) {
+	public ArrayList<String> createAdditionalLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		//No additional line. Everything is on one line
 		return null;
 	}
 	
 	
 	
+
 	@Override
-	protected StringBuilder createPrinterOutput(
-			ArrayList<TreePrinterTree<String, TextTreePrinterLines>> preparedTrees) {
-		
+	protected StringBuilder createPrinterOutput() {
 		StringBuilder sb = new StringBuilder();
 		
-		//The header for the very first tree only. If the head node is invisible, 
-		//TreePrinter would create a tree for each child node -> should not happen 
-		//anyways in a family tree...
+		LinkedList<TextTreePrinterLines> allLines = getAllLines();
+		int maxPrefixCount = 0;
 		
-		if (alignValuesRight()) {
+		//Count the maximum number of columns and prefixes
+		for (TextTreePrinterLines lines : allLines) {
+			if (lines.getLineCount() == 0) {
+				continue;
+			}
+			
+			if (lines.getPrefixCount(0) > maxPrefixCount) {
+				maxPrefixCount = lines.getPrefixCount(0);
+			}
+		}
+		
+		//The header for the tree
+		
+		if (isAlingValuesRight()) {
 			//Align the header over the actual data by creating empty cells 
 			//over the connector lines
-			for (int i = 0; i < preparedTrees.get(0).getHightestNodeLevel(); i++) {
-				sb.append("L_" + i + DELIMITER);
+			for (int i = 0; i < maxPrefixCount; i++) {
+				sb.append(DELIMITER);
 			}
 		}
 		
@@ -207,9 +244,9 @@ public class FamilytreeCSVPrinter
 			sb.append(DELIMITER);
 		}
 		
-		sb.append(TreePrinter.LINE_SEPARATOR);
+		sb.append(LINE_SEPARATOR);
 		
-		sb.append(super.createPrinterOutput(preparedTrees));
+		sb.append(super.createPrinterOutput());
 		
 		return sb;
 	}

@@ -20,16 +20,12 @@ import java.util.ArrayList;
 
 import ch.thn.gedcom.GedcomFormatter;
 import ch.thn.gedcom.GedcomHelper;
-import ch.thn.gedcom.creator.GedcomCreatorFamily;
-import ch.thn.gedcom.creator.GedcomCreatorEnums.NameType;
-import ch.thn.gedcom.creator.GedcomCreatorEnums.Sex;
-import ch.thn.gedcom.data.GedcomNode;
-import ch.thn.gedcom.familytree.FamilyTree;
-import ch.thn.gedcom.familytree.FamilyTreeNode;
-import ch.thn.gedcom.familytree.GedcomToFamilytree;
-import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
+import ch.thn.gedcom.creator.GedcomFamily;
+import ch.thn.gedcom.creator.GedcomEnums.NameType;
+import ch.thn.gedcom.creator.GedcomEnums.Sex;
+import ch.thn.gedcom.creator.GedcomIndividual;
 import ch.thn.util.StringUtil;
-import ch.thn.util.tree.printable.printer.TextTreePrinterLines;
+import ch.thn.util.tree.printer.text.TextTreePrinterLines;
 
 /**
  *
@@ -43,9 +39,7 @@ public class FamilyTreePrintBuilder {
 	public static final String dateFormatYear = "yyyy";
 	public static final String dateFormatYearMonth = "MM.yyyy";
 	public static final String dateFormatYearMonthDay = "dd.MM.yyyy";
-	
-	private GedcomToFamilytree toFamilyTree = null;
-		
+			
 	private boolean showId = true;
 	private boolean showGender = true;
 	private boolean showRelationship = true;
@@ -65,7 +59,6 @@ public class FamilyTreePrintBuilder {
 	/**
 	 * 
 	 * 
-	 * @param toFamilyTree
 	 * @param showId
 	 * @param showGender
 	 * @param showRelationship
@@ -79,13 +72,12 @@ public class FamilyTreePrintBuilder {
 	 * @param showDivorcedPartnerWithoutChildren
 	 * @param showDivorcedPartnerWithChildren
 	 */
-	public FamilyTreePrintBuilder(GedcomToFamilytree toFamilyTree, boolean showId, 
+	public FamilyTreePrintBuilder(boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
 			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
 		
-		this.toFamilyTree = toFamilyTree;
 		this.showId = showId;
 		this.showGender = showGender;
 		this.showRelationship = showRelationship;
@@ -196,29 +188,20 @@ public class FamilyTreePrintBuilder {
 	
 	
 	/**
-	 * Returns only the ID of the individual and removes any individual-id-prefix 
-	 * {@link GedcomToFamilytree#indiXRefPrefix}.
+	 * Returns only the ID of the individual
 	 * 
 	 * @param indi
 	 * @param prefix
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getId(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getId(GedcomIndividual indi, 
 			String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
-		if (showId) {
-			String id = indi.getId();
-			
+		if (showId) {			
 			sb.append(prefix);
-			
-			if (id.startsWith(GedcomToFamilytree.indiXRefPrefix)) {
-				sb.append(id.substring(GedcomToFamilytree.indiXRefPrefix.length()));
-			} else {
-				sb.append(id);
-			}
-			
+			sb.append(indi.getId());
 			sb.append(postfix);
 		}
 		
@@ -234,7 +217,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getBirthDate(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getBirthDate(GedcomIndividual indi, 
 			String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -267,7 +250,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getDeathDate(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getDeathDate(GedcomIndividual indi, 
 			String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -299,7 +282,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getAge(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getAge(GedcomIndividual indi, 
 			String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -335,7 +318,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getGender(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getGender(GedcomIndividual indi, 
 			String male, String female, String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -364,7 +347,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getFirstName(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getFirstName(GedcomIndividual indi, 
 			String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -394,7 +377,7 @@ public class FamilyTreePrintBuilder {
 	 * @param forceReturnMaidenName
 	 * @return
 	 */
-	public StringBuilder getMaidenName(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getMaidenName(GedcomIndividual indi, 
 			String prefix, String postfix, boolean forceReturnMaidenName) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -436,7 +419,7 @@ public class FamilyTreePrintBuilder {
 	 * @param forceReturnMarriedName
 	 * @return
 	 */
-	public StringBuilder getMarriedName(GedcomToFamilytreeIndividual indi, GedcomCreatorFamily family, 
+	public StringBuilder getMarriedName(GedcomIndividual indi, GedcomFamily family, 
 			String prefix, String postfix, boolean forceReturnMarriedName) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -479,7 +462,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getEmail(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getEmail(GedcomIndividual indi, 
 			String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -508,7 +491,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getAddress(GedcomToFamilytreeIndividual indi, 
+	public StringBuilder getAddress(GedcomIndividual indi, 
 			String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -538,7 +521,7 @@ public class FamilyTreePrintBuilder {
 	 * @param includeEmpty
 	 * @return
 	 */
-	public ArrayList<String> getAddressParts(GedcomToFamilytreeIndividual indi, boolean includeEmpty) {
+	public ArrayList<String> getAddressParts(GedcomIndividual indi, boolean includeEmpty) {
 		ArrayList<String> addressParts = new ArrayList<String>();
 		
 		if (showAddress) {
@@ -587,7 +570,7 @@ public class FamilyTreePrintBuilder {
 	 * @param postfix
 	 * @return
 	 */
-	public StringBuilder getRelationship(GedcomCreatorFamily family, 
+	public StringBuilder getRelationship(GedcomFamily family, 
 			String married, String divorced, String unmarried, String prefix, String postfix) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -617,57 +600,25 @@ public class FamilyTreePrintBuilder {
 	/**
 	 * 
 	 * 
-	 * @param parent1
-	 * @param parent2
-	 * @return
-	 */
-	public GedcomCreatorFamily getFamily(GedcomToFamilytreeIndividual parent1, 
-			GedcomToFamilytreeIndividual parent2) {
-		if (parent1 == null || parent2 == null) {
-			return null;	
-		}
-		
-		String familyXRef = toFamilyTree.getFamilyOfParents(parent1.getId(), parent2.getId());
-		
-		if (familyXRef != null) {
-			GedcomNode family = toFamilyTree.getFamily(familyXRef);
-			return new GedcomCreatorFamily(toFamilyTree.getStore(), family);
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param currentNode
+	 * @param partner1
+	 * @param partner2
+	 * @param family
 	 * @param printer
 	 * @param addEmptyLineAtEnd Adds an empty line after each node
 	 * @param replaceNullValue Replace <code>null</code> values with an empty value
 	 * @return
 	 */
-	public TextTreePrinterLines createNodeValueLines(FamilyTreeNode currentNode, 
+	public TextTreePrinterLines createNodeValueLines(
+			GedcomIndividual partner1, GedcomIndividual partner2, GedcomFamily family,  
 			FamilytreePrinter printer, boolean addEmptyLineAtEnd, boolean replaceNullValue) {
 		TextTreePrinterLines lines = new TextTreePrinterLines(false, replaceNullValue, null, "");
 		
-		if (currentNode instanceof FamilyTree) {
-			//Only the title
-			lines.addNewLine(((FamilyTree)currentNode).getFamilyTreeTitle());
-			
-			return lines;
-		}
-		
-		//The individuals
-		GedcomToFamilytreeIndividual[] values = currentNode.getIndividuals();
-		
-		GedcomCreatorFamily family = getFamily(values[0], values[1]);
-		
 		//Descendant
-		lines.addNewLine(printer.createPrimaryLine(values[0], values[1], family, false));
-		lines.addNewLine(printer.createAdditionalLine(values[0], values[1], family, false));
-		
+		lines.addNewLine(printer.createPrimaryLine(partner1, partner2, family, false));
+		lines.addNewLine(printer.createAdditionalLine(partner1, partner2, family, false));
+
 		//Partner of descendant
-		if (values[1] != null) {
+		if (partner2 != null) {
 			boolean printPartner = true;
 			
 			if (family.isDivorced()) {
@@ -689,9 +640,9 @@ public class FamilyTreePrintBuilder {
 			if (printPartner) {
 				
 				//Partner of descendant
-				if (values[1] != null) {
-					lines.addNewLine(printer.createPrimaryLine(values[1], values[0], family, true));
-					lines.addNewLine(printer.createAdditionalLine(values[1], values[0], family, true));
+				if (partner2 != null) {
+					lines.addNewLine(printer.createPrimaryLine(partner2, partner1, family, true));
+					lines.addNewLine(printer.createAdditionalLine(partner2, partner1, family, true));
 				}
 			}
 		}

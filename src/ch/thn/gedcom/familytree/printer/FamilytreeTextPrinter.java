@@ -17,15 +17,16 @@
 package ch.thn.gedcom.familytree.printer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import ch.thn.gedcom.creator.GedcomCreatorFamily;
+import ch.thn.gedcom.creator.GedcomFamily;
+import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.familytree.FamilyTree;
 import ch.thn.gedcom.familytree.FamilyTreeNode;
-import ch.thn.gedcom.familytree.GedcomToFamilytree;
-import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
-import ch.thn.util.tree.printable.printer.TextTreePrinterLines;
-import ch.thn.util.tree.printable.printer.TreePrinterNode;
-import ch.thn.util.tree.printable.printer.TreePrinterTree;
-import ch.thn.util.tree.printable.printer.vertical.GenericVerticalTextTreePrinter;
+import ch.thn.gedcom.familytree.GedcomToFamilyTree;
+import ch.thn.util.tree.onoff.OnOffTreeUtil;
+import ch.thn.util.tree.printer.text.GenericLeftRightTextTreePrinter;
+import ch.thn.util.tree.printer.text.TextTreePrinterLines;
 
 /**
  * 
@@ -33,16 +34,17 @@ import ch.thn.util.tree.printable.printer.vertical.GenericVerticalTextTreePrinte
  * @author Thomas Naeff (github.com/thnaeff)
  *
  */
-public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String, GedcomToFamilytreeIndividual[], FamilyTreeNode> implements FamilytreePrinter {	
+public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<GedcomIndividual[], FamilyTreeNode> implements FamilytreePrinter {	
 	
 	private FamilyTreePrintBuilder printBuilder = null;
+	
+	private GedcomToFamilyTree toFamilyTree = null;
 	
 	boolean addNodeSpace = false;
 	
 	/**
 	 * 
 	 * 
-	 * @param toFamilyTree
 	 * @param addNodeSpace
 	 * @param showId
 	 * @param showGender
@@ -58,16 +60,16 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	 * @param showDivorcedPartnerWithoutChildren
 	 * @param showDivorcedPartnerWithChildren
 	 */
-	public FamilytreeTextPrinter(GedcomToFamilytree toFamilyTree, boolean addNodeSpace, boolean showId, 
+	public FamilytreeTextPrinter(boolean addNodeSpace, boolean showId, 
 			boolean showGender, boolean showRelationship, boolean showEmail, 
 			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
 			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
 			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
-		super(true, true, true, false);
+		super(LeftRightTextPrinterMode.STANDARD_CONNECTTOFIRST);
 		
 		this.addNodeSpace = addNodeSpace;
 		
-		printBuilder = new FamilyTreePrintBuilder(toFamilyTree, showId, showGender, 
+		printBuilder = new FamilyTreePrintBuilder(showId, showGender, 
 				showRelationship, showEmail, showAddress, showAgeForDead, 
 				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
 				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
@@ -75,36 +77,62 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	}
 	
 	@Override
-	public FamilyTreePrintBuilder getPrintBuilder() {
-		return printBuilder;
+	public StringBuilder print(FamilyTreeNode printNode) {
+		throw new UnsupportedOperationException("The method print(FamilyTreeNode) is not supported. " +
+				"Use print(GedcomToFamilyTree) instead.");
 	}
+	
+	@Override
+	public StringBuilder print(GedcomToFamilyTree toFamilyTree) {
+		this.toFamilyTree = toFamilyTree;
+		
+		LinkedList<FamilyTreeNode> trees = OnOffTreeUtil.convertToSimpleTree(toFamilyTree.getFamilyTree().getFirstSibling(), true, true);
+		
+		StringBuilder sb = new StringBuilder();
+		for (FamilyTreeNode tree : trees) {
+			if (sb.length() > 0) {
+				//Keep trees separated a little
+				sb.append(LINE_SEPARATOR);
+			}
+			sb.append(super.print(tree));
+		}
+		
+		return sb;
+	}
+	
 	
 	@Override
 	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
 		
-		return printBuilder.createNodeValueLines(node, this, addNodeSpace, false);
+		if (node instanceof FamilyTree) {
+			TextTreePrinterLines lines = new TextTreePrinterLines(false, false, null, "");
+			//Only the title
+			lines.addNewLine(((FamilyTree)node).getFamilyTreeTitle());
+			return lines;
+		}
+		
+		GedcomIndividual[] individuals = node.getNodeValue();
+		
+		return printBuilder.createNodeValueLines(individuals[0], individuals[1], 
+				toFamilyTree.getFamilyOfParents(individuals[0], individuals[1]), 
+				this, addNodeSpace, false);
 	
 	}
 	
+	
 	@Override
-	protected void preProcessingNode(
-			TreePrinterNode<String, TextTreePrinterLines> printerNode,
-			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
-			boolean isHeadNode, boolean isFirstChildNode,
-			boolean isLastChildNode, boolean hasChildNodes) {
-	}
-
-	@Override
-	protected void postProcessingNode(
-			TreePrinterNode<String, TextTreePrinterLines> printerNode,
-			int currentNodeLevel, int currentNodeIndex, int currentNodeCount,
-			boolean isHeadNode, boolean isFirstChildNode,
-			boolean isLastChildNode, boolean hasChildNodes) {
+	protected void preProcessing(TextTreePrinterLines nodeData,
+			FamilyTreeNode nextNode) {
 	}
 	
 	@Override
-	public ArrayList<String> createPrimaryLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner) {
+	protected void postProcessing(TextTreePrinterLines nodeData,
+			FamilyTreeNode printedNode) {
+	}
+	
+	@Override
+	public ArrayList<String> createPrimaryLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		ArrayList<String> values = new ArrayList<String>(7);
 		
 		values.add(printBuilder.getId(indi, "", "").toString());
@@ -169,12 +197,12 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	}
 	
 	@Override
-	public ArrayList<String> createAdditionalLine(GedcomToFamilytreeIndividual indi, 
-			GedcomToFamilytreeIndividual partner, GedcomCreatorFamily family, boolean isPartner) {
+	public ArrayList<String> createAdditionalLine(GedcomIndividual indi, 
+			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		ArrayList<String> values = new ArrayList<String>(3);
 		
 		//A little space in front of the additional line
-		values.add(FamilytreeTextPrinter.createColumnString(printBuilder.getId((isPartner ? partner : indi), "", "").length(), " "));
+		values.add(createColumnString(printBuilder.getId((isPartner ? partner : indi), "", "").length(), " "));
 		
 		if (isPartner) {
 			//Extra space for partners on additional lines
@@ -224,40 +252,15 @@ public class FamilytreeTextPrinter extends GenericVerticalTextTreePrinter<String
 	
 	
 	@Override
-	protected void appendValue(StringBuilder sb, String value, int lineIndex,
-			int valueIndex, TreePrinterTree<String, TextTreePrinterLines> tree,
-			TreePrinterNode<String, TextTreePrinterLines> node,
-			TextTreePrinterLines lines) {
+	protected String appendValue(TextTreePrinterLines lines, int valueIndex,
+			int lineIndex) {
+		String value = lines.getValue(lineIndex, valueIndex);
 		
 		if (value != null && value.length() > 0) {
-			sb.append(value);
-			sb.append(FamilyTreePrintBuilder.SPACE);
+			return value + FamilyTreePrintBuilder.SPACE;
 		}
 		
-		
-	}
-	
-	
-	/**
-	 * This method just repeatedly appends the content of columnContent and returns 
-	 * the result.
-	 * 
-	 * @param numberOfColumns
-	 * @param columnContent
-	 * @return
-	 */
-	public static String createColumnString(int numberOfColumns, String columnContent) {
-		if (numberOfColumns < 0 || columnContent == null) {
-			return "";
-		}
-		
-		StringBuilder sb = new StringBuilder(numberOfColumns * columnContent.length());
-		
-		for (int i = 0; i < numberOfColumns; i++) {
-			sb.append(columnContent);
-		}
-		
-		return sb.toString();
+		return "";
 	}
 	
 	

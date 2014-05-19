@@ -18,8 +18,8 @@ package ch.thn.gedcom.familytree.sort;
 
 import ch.thn.gedcom.GedcomFormatter;
 import ch.thn.gedcom.GedcomHelper;
+import ch.thn.gedcom.creator.GedcomIndividual;
 import ch.thn.gedcom.familytree.FamilyTreeNode;
-import ch.thn.gedcom.familytree.GedcomToFamilytreeIndividual;
 
 /**
  *
@@ -50,8 +50,8 @@ public class FamilytreeBirthDateSorter implements FamilyTreeSorter {
 
 	@Override
 	public int compare(FamilyTreeNode treeNode1, FamilyTreeNode treeNode2) {
-		GedcomToFamilytreeIndividual indi1 = treeNode1.getIndividuals()[0];
-		GedcomToFamilytreeIndividual indi2 = treeNode2.getIndividuals()[0];
+		GedcomIndividual indi1 = treeNode1.getNodeValue()[0];
+		GedcomIndividual indi2 = treeNode2.getNodeValue()[0];
 		
 		if (indi1 == null || indi2 == null) {
 			return 0;
