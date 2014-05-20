@@ -18,8 +18,8 @@ package ch.thn.gedcom.familytree.printer;
 
 import java.util.ArrayList;
 
-import ch.thn.gedcom.creator.GedcomFamily;
-import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.creator.structures.GedcomFamily;
+import ch.thn.gedcom.creator.structures.GedcomIndividual;
 import ch.thn.gedcom.familytree.GedcomToFamilyTree;
 
 /**

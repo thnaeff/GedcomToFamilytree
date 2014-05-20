@@ -19,10 +19,11 @@ package ch.thn.gedcom.familytree.test;
 import java.util.Date;
 
 import ch.thn.gedcom.GedcomFormatter;
-import ch.thn.gedcom.creator.GedcomFamily;
-import ch.thn.gedcom.creator.GedcomIndividual;
 import ch.thn.gedcom.creator.GedcomEnums.NameType;
 import ch.thn.gedcom.creator.GedcomEnums.Sex;
+import ch.thn.gedcom.creator.GedcomCreatorStructureStorage;
+import ch.thn.gedcom.creator.structures.GedcomFamily;
+import ch.thn.gedcom.creator.structures.GedcomIndividual;
 import ch.thn.gedcom.familytree.GedcomToFamilyTree;
 import ch.thn.gedcom.familytree.printer.FamilytreeCSVPrinter;
 import ch.thn.gedcom.familytree.printer.FamilytreeHTMLPrinter;
@@ -61,29 +62,29 @@ public class GedcomToFamilytreeTest {
 		indi1.setBirth(true, GedcomFormatter.getGedcomDate(new Date(), true, true));
 		indi1.setDeath(true, GedcomFormatter.getGedcomDate(new Date(), true, true));
 		indi1.addAddress("Strasse", null, null, null, null, null, new String[] {"something@gmail.com"}, null, null);
-		indi1.addSpouseLink("F1");
-		indi1.addSpouseLink("F3");
+		indi1.addSpouseFamilyLink("F1");
+		indi1.addSpouseFamilyLink("F3");
 		System.out.println(treePrinter.print(indi1.getTree()));
 		
 		GedcomIndividual indi2 = new GedcomIndividual(store, "I2");
 		indi2.setSex(Sex.FEMALE);
 		indi2.addName("WifeName1", new String[] {"Wife"});
 		indi2.addAddress("Strasse", null, null, null, null, null, null, null, null);
-		indi2.addSpouseLink("F1");
+		indi2.addSpouseFamilyLink("F1");
 //		System.out.println(indi2.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 				
 		GedcomIndividual indi3 = new GedcomIndividual(store, "I3");
 		indi3.setSex(Sex.MALE);
 		indi3.addName("Name1", new String[] {"Child 1"});
-		indi3.addChildLink("F1");
+		indi3.addChildFamilyLink("F1");
 //		System.out.println(indi3.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomIndividual indi4 = new GedcomIndividual(store, "I4");
 		indi4.setSex(Sex.FEMALE);
 		indi4.addName("Name1", new String[] {"Child 2"});
 		indi4.addAddress("Strasse 4", null, null, null, null, null, null, null, null);
-		indi4.addSpouseLink("F2");
-		indi4.addChildLink("F1");
+		indi4.addSpouseFamilyLink("F2");
+		indi4.addChildFamilyLink("F1");
 //		System.out.println(indi4.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomFamily fam1 = new GedcomFamily(store, "F1");
@@ -99,14 +100,14 @@ public class GedcomToFamilytreeTest {
 		GedcomIndividual indi5 = new GedcomIndividual(store, "I5");
 		indi5.setSex(Sex.MALE);
 		indi5.addName("Name2", new String[] {"Husband"});
-		indi5.addSpouseLink("F2");
+		indi5.addSpouseFamilyLink("F2");
 //		System.out.println(indi5.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomIndividual indi6 = new GedcomIndividual(store, "I6");
 		indi6.setSex(Sex.MALE);
 		indi6.addName("Name2", new String[] {"Child 1"});
 		indi6.addAddress("Strasse 6", null, null, null, null, null, null, null, null);
-		indi6.addChildLink("F2");
+		indi6.addChildFamilyLink("F2");
 //		System.out.println(indi6.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomFamily fam2 = new GedcomFamily(store, "F2");
@@ -120,7 +121,7 @@ public class GedcomToFamilytreeTest {
 		GedcomIndividual indi7 = new GedcomIndividual(store, "I7");
 		indi7.setSex(Sex.MALE);
 		indi7.addName("Name3", new String[] {"Child 3"});
-		indi7.addChildLink("F3");
+		indi7.addChildFamilyLink("F3");
 //		System.out.println(indi7.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomFamily fam3 = new GedcomFamily(store, "F3");
@@ -135,24 +136,25 @@ public class GedcomToFamilytreeTest {
 		indi8.setSex(Sex.MALE);
 		indi8.addName("Name1", new String[] {"Child 3"});
 		indi8.addAddress("Strasse 8", null, null, null, null, null, null, null, null);
-		indi8.addChildLink("F1");
+		indi8.addChildFamilyLink("F1");
 //		System.out.println(indi8.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
+		GedcomCreatorStructureStorage storage = new GedcomCreatorStructureStorage();
 		
-		GedcomToFamilyTree toFamilyTree = new GedcomToFamilyTree(store);
+		storage.addIndividual(indi1);
+		storage.addIndividual(indi2);
+		storage.addIndividual(indi3);
+		storage.addIndividual(indi4);
+		storage.addIndividual(indi5);
+		storage.addIndividual(indi6);
+		storage.addIndividual(indi7);
+		storage.addIndividual(indi8);
 		
-		toFamilyTree.addIndividual(indi1);
-		toFamilyTree.addIndividual(indi2);
-		toFamilyTree.addIndividual(indi3);
-		toFamilyTree.addIndividual(indi4);
-		toFamilyTree.addIndividual(indi5);
-		toFamilyTree.addIndividual(indi6);
-		toFamilyTree.addIndividual(indi7);
-		toFamilyTree.addIndividual(indi8);
+		storage.addFamily(fam1);
+		storage.addFamily(fam2);
+		storage.addFamily(fam3);
 		
-		toFamilyTree.addFamily(fam1);
-		toFamilyTree.addFamily(fam2);
-		toFamilyTree.addFamily(fam3);
+		GedcomToFamilyTree toFamilyTree = new GedcomToFamilyTree(storage);
 		
 		toFamilyTree.buildFamilyTree("I1");
 //		toFamilyTree.buildFamilyTree("I1", "GedcomToFamilytree Test-Tree");

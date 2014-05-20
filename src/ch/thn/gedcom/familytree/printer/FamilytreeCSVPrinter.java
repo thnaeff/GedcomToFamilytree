@@ -19,8 +19,8 @@ package ch.thn.gedcom.familytree.printer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import ch.thn.gedcom.creator.GedcomFamily;
-import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.creator.structures.GedcomFamily;
+import ch.thn.gedcom.creator.structures.GedcomIndividual;
 import ch.thn.gedcom.familytree.FamilyTree;
 import ch.thn.gedcom.familytree.FamilyTreeNode;
 import ch.thn.gedcom.familytree.GedcomToFamilyTree;
@@ -111,7 +111,7 @@ public class FamilytreeCSVPrinter
 		GedcomIndividual[] individuals = node.getNodeValue();
 		
 		return printBuilder.createNodeValueLines(individuals[0], individuals[1],  
-				toFamilyTree.getFamilyOfParents(individuals[0], individuals[1]), 
+				toFamilyTree.getStorage().getFamilyOfParents(individuals[0], individuals[1]), 
 				this, false, true);
 		
 	}

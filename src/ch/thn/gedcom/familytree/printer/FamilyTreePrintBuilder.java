@@ -20,10 +20,10 @@ import java.util.ArrayList;
 
 import ch.thn.gedcom.GedcomFormatter;
 import ch.thn.gedcom.GedcomHelper;
-import ch.thn.gedcom.creator.GedcomFamily;
 import ch.thn.gedcom.creator.GedcomEnums.NameType;
 import ch.thn.gedcom.creator.GedcomEnums.Sex;
-import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.creator.structures.GedcomFamily;
+import ch.thn.gedcom.creator.structures.GedcomIndividual;
 import ch.thn.util.StringUtil;
 import ch.thn.util.tree.printer.text.TextTreePrinterLines;
 

@@ -18,7 +18,7 @@ package ch.thn.gedcom.familytree.sort;
 
 import ch.thn.gedcom.GedcomFormatter;
 import ch.thn.gedcom.GedcomHelper;
-import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.creator.structures.GedcomIndividual;
 import ch.thn.gedcom.familytree.FamilyTreeNode;
 
 /**

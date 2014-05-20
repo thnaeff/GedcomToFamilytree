@@ -17,7 +17,7 @@
 package ch.thn.gedcom.familytree;
 
 
-import ch.thn.gedcom.creator.GedcomIndividual;
+import ch.thn.gedcom.creator.structures.GedcomIndividual;
 import ch.thn.util.tree.onoff.core.AbstractGenericOnOffKeyTreeNode;
 
 /**
