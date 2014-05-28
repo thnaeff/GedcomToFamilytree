@@ -621,7 +621,7 @@ public class FamilyTreePrintBuilder {
 		if (partner2 != null) {
 			boolean printPartner = true;
 			
-			if (family.isDivorced()) {
+			if (family != null && family.isDivorced()) {
 				if (family.getNumberOfChildren() == 0) {
 					//Divorced but without children
 					if (!showDivorcedPartnerWithoutChildren) {
