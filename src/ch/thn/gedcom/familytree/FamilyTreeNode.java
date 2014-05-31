@@ -18,7 +18,7 @@ package ch.thn.gedcom.familytree;
 
 
 import ch.thn.gedcom.creator.structures.GedcomIndividual;
-import ch.thn.util.tree.onoff.core.AbstractGenericOnOffKeyTreeNode;
+import ch.thn.util.tree.onoff.core.AbstractGenericOnOffKeyListTreeNode;
 
 /**
  *
@@ -26,7 +26,7 @@ import ch.thn.util.tree.onoff.core.AbstractGenericOnOffKeyTreeNode;
  *
  */
 public class FamilyTreeNode
-	extends AbstractGenericOnOffKeyTreeNode<String, GedcomIndividual[], FamilyTreeNode> {
+	extends AbstractGenericOnOffKeyListTreeNode<String, GedcomIndividual[], FamilyTreeNode> {
 	
 
 	/**
@@ -49,21 +49,6 @@ public class FamilyTreeNode
 		super(key, value);
 	}
 	
-	/**
-	 * @param key
-	 * @param value
-	 */
-	protected FamilyTreeNode(GedcomIndividual[] value) {
-		super(value);
-	}
-
-	/**
-	 * @param node
-	 */
-	protected FamilyTreeNode(FamilyTreeNode node) {
-		super(node);
-	}
-	
 	@Override
 	public FamilyTreeNode nodeFactory(String key, GedcomIndividual[] value) {
 		return new FamilyTreeNode(key, value);
@@ -71,12 +56,12 @@ public class FamilyTreeNode
 
 	@Override
 	public FamilyTreeNode nodeFactory(GedcomIndividual[] value) {
-		return new FamilyTreeNode(value);
+		return new FamilyTreeNode(null, value);
 	}
 
 	@Override
 	public FamilyTreeNode nodeFactory(FamilyTreeNode node) {
-		return new FamilyTreeNode(node);
+		return new FamilyTreeNode(node.getNodeKey(), node.getNodeValue());
 	}
 
 	@Override
