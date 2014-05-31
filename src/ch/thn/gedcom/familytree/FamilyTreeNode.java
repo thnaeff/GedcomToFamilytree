@@ -18,50 +18,45 @@ package ch.thn.gedcom.familytree;
 
 
 import ch.thn.gedcom.creator.structures.GedcomIndividual;
-import ch.thn.util.tree.onoff.core.AbstractGenericOnOffKeyListTreeNode;
+import ch.thn.gedcom.familytree.sort.FamilytreeBirthDateSorter;
+import ch.thn.util.tree.onoff.core.AbstractGenericOnOffSetTreeNode;
 
 /**
+ * 
+ * 
  *
  * @author Thomas Naeff (github.com/thnaeff)
  *
  */
 public class FamilyTreeNode
-	extends AbstractGenericOnOffKeyListTreeNode<String, GedcomIndividual[], FamilyTreeNode> {
+	extends AbstractGenericOnOffSetTreeNode<GedcomIndividual[], FamilyTreeNode> {
 	
 
 	/**
 	 * 
 	 * 
-	 * @param key
 	 * @param parent1 The parent which is the child of the parents of this family
 	 * @param parent2 The partner of parent1
 	 */
-	public FamilyTreeNode(String key, GedcomIndividual parent1, 
-			GedcomIndividual parent2) {
-		super(key, new GedcomIndividual[] {parent1, parent2});
+	public FamilyTreeNode(GedcomIndividual parent1, GedcomIndividual parent2) {
+		super(new FamilytreeBirthDateSorter(), new GedcomIndividual[] {parent1, parent2});
 	}
 	
 	/**
-	 * @param key
 	 * @param value
 	 */
-	public FamilyTreeNode(String key, GedcomIndividual[] value) {
-		super(key, value);
-	}
-	
-	@Override
-	public FamilyTreeNode nodeFactory(String key, GedcomIndividual[] value) {
-		return new FamilyTreeNode(key, value);
+	public FamilyTreeNode(GedcomIndividual[] value) {
+		super(new FamilytreeBirthDateSorter(), value);
 	}
 
 	@Override
 	public FamilyTreeNode nodeFactory(GedcomIndividual[] value) {
-		return new FamilyTreeNode(null, value);
+		return new FamilyTreeNode(value);
 	}
 
 	@Override
 	public FamilyTreeNode nodeFactory(FamilyTreeNode node) {
-		return new FamilyTreeNode(node.getNodeKey(), node.getNodeValue());
+		return new FamilyTreeNode(node.getNodeValue());
 	}
 
 	@Override
@@ -72,7 +67,7 @@ public class FamilyTreeNode
 	@Override
 	public String toString() {
 		GedcomIndividual[] individuals = getNodeValue();
-		return getNodeKey() + ": " + individuals[0] + ", " + individuals[1];
+		return individuals[0] + ", " + individuals[1];
 	}
 
 }

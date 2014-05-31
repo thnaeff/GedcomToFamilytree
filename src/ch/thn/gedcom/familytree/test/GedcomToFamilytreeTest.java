@@ -77,6 +77,7 @@ public class GedcomToFamilytreeTest {
 		indi3.setSex(Sex.MALE);
 		indi3.addName("Name1", new String[] {"Child 1"});
 		indi3.addChildFamilyLink("F1");
+		indi3.setBirth(true, "03 JAN 2000");
 //		System.out.println(indi3.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomIndividual indi4 = new GedcomIndividual(store, "I4");
@@ -85,6 +86,7 @@ public class GedcomToFamilytreeTest {
 		indi4.addAddress("Strasse 4", null, null, null, null, null, null, null, null);
 		indi4.addSpouseFamilyLink("F2");
 		indi4.addChildFamilyLink("F1");
+		indi4.setBirth(true, "01 JAN 2000");
 //		System.out.println(indi4.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomFamily fam1 = new GedcomFamily(store, "F1");
@@ -137,6 +139,7 @@ public class GedcomToFamilytreeTest {
 		indi8.addName("Name1", new String[] {"Child 3"});
 		indi8.addAddress("Strasse 8", null, null, null, null, null, null, null, null);
 		indi8.addChildFamilyLink("F1");
+		indi8.setBirth(true, "02 JAN 2000");
 //		System.out.println(indi8.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
 		GedcomCreatorStructureStorage storage = new GedcomCreatorStructureStorage();

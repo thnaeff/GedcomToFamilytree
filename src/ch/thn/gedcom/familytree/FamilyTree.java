@@ -34,7 +34,7 @@ public class FamilyTree extends FamilyTreeNode {
 	 * @param familyTreeTitle
 	 */
 	public FamilyTree(String familyTreeTitle) {
-		super("familyTreeTitle", null, null);
+		super(null, null);
 		
 		this.familyTreeTitle = familyTreeTitle;
 		
@@ -44,7 +44,14 @@ public class FamilyTree extends FamilyTreeNode {
 		}
 	}
 	
-	
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	public FamilyTreeNode getFirstFamily() {
+		return iterator().next();
+	}
 	
 	/**
 	 * @return the familyTreeTitle

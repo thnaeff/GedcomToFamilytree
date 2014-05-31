@@ -219,9 +219,9 @@ public class GedcomToFamilyTree {
 		
 		//
 		if (childOfParentsId.equals(husbXRef)) {
-			newNode = new FamilyTreeNode(husbXRef + "-" + wifeXRef, husband, wife);
+			newNode = new FamilyTreeNode(husband, wife);
 		} else {
-			newNode = new FamilyTreeNode(husbXRef + "-" + wifeXRef, wife, husband);
+			newNode = new FamilyTreeNode(wife, husband);
 		}
 		
 		treeNode.addChildNode(newNode);
