@@ -17,8 +17,9 @@
 package ch.thn.gedcom.familytree;
 
 
+import ch.thn.gedcom.creator.structures.GedcomFamily;
 import ch.thn.gedcom.creator.structures.GedcomIndividual;
-import ch.thn.gedcom.familytree.sort.FamilytreeBirthDateSorter;
+import ch.thn.gedcom.familytree.sort.FamilytreeSorter;
 import ch.thn.util.tree.onoff.core.AbstractGenericOnOffSetTreeNode;
 
 /**
@@ -31,38 +32,60 @@ import ch.thn.util.tree.onoff.core.AbstractGenericOnOffSetTreeNode;
 public class FamilyTreeNode
 	extends AbstractGenericOnOffSetTreeNode<GedcomIndividual[], FamilyTreeNode> {
 	
+	
+	private static FamilytreeSorter sorter = new FamilytreeSorter();
+	
+	private GedcomFamily family = null;
 
 	/**
 	 * 
 	 * 
 	 * @param parent1 The parent which is the child of the parents of this family
 	 * @param parent2 The partner of parent1
+	 * @param family The family of the two parents
 	 */
-	public FamilyTreeNode(GedcomIndividual parent1, GedcomIndividual parent2) {
-		super(new FamilytreeBirthDateSorter(), new GedcomIndividual[] {parent1, parent2});
+	public FamilyTreeNode(GedcomIndividual parent1, GedcomIndividual parent2, GedcomFamily family) {
+		super(sorter, new GedcomIndividual[] {parent1, parent2});
+		this.family = family;
 	}
 	
 	/**
+	 * 
+	 * 
 	 * @param value
+	 * @param family
 	 */
-	public FamilyTreeNode(GedcomIndividual[] value) {
-		super(new FamilytreeBirthDateSorter(), value);
+	private FamilyTreeNode(GedcomIndividual[] value, GedcomFamily family) {
+		super(sorter, value);
+		this.family = family;
 	}
 
 	@Override
 	public FamilyTreeNode nodeFactory(GedcomIndividual[] value) {
-		return new FamilyTreeNode(value);
+		throw new UnsupportedOperationException("Node can not be created with just the values. Use the ");
 	}
 
 	@Override
 	public FamilyTreeNode nodeFactory(FamilyTreeNode node) {
-		return new FamilyTreeNode(node.getNodeValue());
+		return new FamilyTreeNode(node.getNodeValue(), node.getFamily());
 	}
 
 	@Override
 	protected FamilyTreeNode internalGetThis() {
 		return this;
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	public GedcomFamily getFamily() {
+		return family;
+	}
+	
+	
+	
 	
 	@Override
 	public String toString() {

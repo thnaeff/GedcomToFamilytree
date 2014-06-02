@@ -24,6 +24,7 @@ import ch.thn.gedcom.creator.GedcomEnums.Sex;
 import ch.thn.gedcom.creator.GedcomCreatorStructureStorage;
 import ch.thn.gedcom.creator.structures.GedcomFamily;
 import ch.thn.gedcom.creator.structures.GedcomIndividual;
+import ch.thn.gedcom.familytree.FamilyTreeNode;
 import ch.thn.gedcom.familytree.GedcomToFamilyTree;
 import ch.thn.gedcom.familytree.printer.FamilytreeCSVPrinter;
 import ch.thn.gedcom.familytree.printer.FamilytreeHTMLPrinter;
@@ -32,6 +33,7 @@ import ch.thn.gedcom.printer.GedcomStructureTreePrinter;
 import ch.thn.gedcom.store.GedcomParseException;
 import ch.thn.gedcom.store.GedcomStore;
 import ch.thn.util.file.FileUtil;
+import ch.thn.util.tree.printer.text.DebugTextTreePrinter;
 
 /**
  *
@@ -88,17 +90,7 @@ public class GedcomToFamilytreeTest {
 		indi4.addChildFamilyLink("F1");
 		indi4.setBirth(true, "01 JAN 2000");
 //		System.out.println(indi4.getHeadNode().print(new GedcomStructureTreePrinter(true)));
-		
-		GedcomFamily fam1 = new GedcomFamily(store, "F1");
-		fam1.setHusbandLink("I1");
-		fam1.setWifeLink("I2");
-		fam1.addChildLink("I3");
-		fam1.addChildLink("I4");
-		fam1.addChildLink("I8");
-		fam1.setMarried(true, GedcomFormatter.getGedcomDate(new Date(), true, true));
-//		System.out.println(fam1.getHeadNode().print(new GedcomStructureTreePrinter(true)));
-		
-		
+				
 		GedcomIndividual indi5 = new GedcomIndividual(store, "I5");
 		indi5.setSex(Sex.MALE);
 		indi5.addName("Name2", new String[] {"Husband"});
@@ -112,27 +104,11 @@ public class GedcomToFamilytreeTest {
 		indi6.addChildFamilyLink("F2");
 //		System.out.println(indi6.getHeadNode().print(new GedcomStructureTreePrinter(true)));
 		
-		GedcomFamily fam2 = new GedcomFamily(store, "F2");
-		fam2.setHusbandLink("I5");
-		fam2.setWifeLink("I4");
-		fam2.addChildLink("I6");
-//		System.out.println(fam2.getHeadNode().print(new GedcomStructureTreePrinter(true)));
-		
-		
-		
 		GedcomIndividual indi7 = new GedcomIndividual(store, "I7");
 		indi7.setSex(Sex.MALE);
 		indi7.addName("Name3", new String[] {"Child 3"});
 		indi7.addChildFamilyLink("F3");
 //		System.out.println(indi7.getHeadNode().print(new GedcomStructureTreePrinter(true)));
-		
-		GedcomFamily fam3 = new GedcomFamily(store, "F3");
-		fam3.setHusbandLink("I1");
-		fam3.setWifeLink("I4");
-		fam3.addChildLink("I7");
-//		System.out.println(fam3.getHeadNode().print(new GedcomStructureTreePrinter(true)));
-		
-		
 		
 		GedcomIndividual indi8 = new GedcomIndividual(store, "I8");
 		indi8.setSex(Sex.MALE);
@@ -141,6 +117,30 @@ public class GedcomToFamilytreeTest {
 		indi8.addChildFamilyLink("F1");
 		indi8.setBirth(true, "02 JAN 2000");
 //		System.out.println(indi8.getHeadNode().print(new GedcomStructureTreePrinter(true)));
+		
+		
+		
+		GedcomFamily fam1 = new GedcomFamily(store, "F1");
+		fam1.setHusbandLink("I1");
+		fam1.setWifeLink("I2");
+		fam1.addChildLink("I3");
+		fam1.addChildLink("I4");
+		fam1.addChildLink("I8");
+		fam1.setMarried(true, GedcomFormatter.getGedcomDate(new Date(), true, true));
+//		System.out.println(fam1.getHeadNode().print(new GedcomStructureTreePrinter(true)));
+		
+		GedcomFamily fam2 = new GedcomFamily(store, "F2");
+		fam2.setHusbandLink("I5");
+		fam2.setWifeLink("I4");
+		fam2.addChildLink("I6");
+//		System.out.println(fam2.getHeadNode().print(new GedcomStructureTreePrinter(true)));
+		
+		GedcomFamily fam3 = new GedcomFamily(store, "F3");
+		fam3.setHusbandLink("I1");
+		fam3.setWifeLink("I4");
+		fam3.addChildLink("I7");
+//		System.out.println(fam3.getHeadNode().print(new GedcomStructureTreePrinter(true)));
+		
 		
 		GedcomCreatorStructureStorage storage = new GedcomCreatorStructureStorage();
 		
@@ -161,6 +161,9 @@ public class GedcomToFamilytreeTest {
 		
 		toFamilyTree.buildFamilyTree("I1");
 //		toFamilyTree.buildFamilyTree("I1", "GedcomToFamilytree Test-Tree");
+		
+		DebugTextTreePrinter<GedcomIndividual[], FamilyTreeNode> debugPrinter = new DebugTextTreePrinter<>();
+		System.out.println(debugPrinter.print((FamilyTreeNode)toFamilyTree.getFamilyTree()));
 		
 		FamilytreeTextPrinter textPrinter = new FamilytreeTextPrinter(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 		System.out.println(textPrinter.print(toFamilyTree));

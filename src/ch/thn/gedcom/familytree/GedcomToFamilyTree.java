@@ -216,12 +216,13 @@ public class GedcomToFamilyTree {
 		}
 		
 		FamilyTreeNode newNode = null;
+		GedcomFamily family = structureStorage.getFamilyOfParents(husbXRef, wifeXRef);
 		
 		//
 		if (childOfParentsId.equals(husbXRef)) {
-			newNode = new FamilyTreeNode(husband, wife);
+			newNode = new FamilyTreeNode(husband, wife, family);
 		} else {
-			newNode = new FamilyTreeNode(wife, husband);
+			newNode = new FamilyTreeNode(wife, husband, family);
 		}
 		
 		treeNode.addChildNode(newNode);

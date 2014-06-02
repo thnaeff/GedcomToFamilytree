@@ -100,7 +100,7 @@ public class FamilytreeHTMLPrinter
 	public StringBuilder print(GedcomToFamilyTree toFamilyTree) {
 		this.toFamilyTree = toFamilyTree;
 		
-		LinkedList<FamilyTreeNode> trees = OnOffTreeUtil.convertToSimpleTree(toFamilyTree.getFamilyTree().getFirstFamily(), true, true);
+		LinkedList<FamilyTreeNode> trees = OnOffTreeUtil.convertToSimpleTree((FamilyTreeNode)toFamilyTree.getFamilyTree(), true, true);
 		
 		StringBuilder sb = new StringBuilder();
 		for (FamilyTreeNode tree : trees) {

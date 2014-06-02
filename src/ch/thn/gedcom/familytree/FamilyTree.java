@@ -34,7 +34,7 @@ public class FamilyTree extends FamilyTreeNode {
 	 * @param familyTreeTitle
 	 */
 	public FamilyTree(String familyTreeTitle) {
-		super(null, null);
+		super(null, null, null);
 		
 		this.familyTreeTitle = familyTreeTitle;
 		
@@ -42,15 +42,6 @@ public class FamilyTree extends FamilyTreeNode {
 			//Do not show this node if there is no title
 			ignoreNode(true);
 		}
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	public FamilyTreeNode getFirstFamily() {
-		return iterator().next();
 	}
 	
 	/**
@@ -63,7 +54,7 @@ public class FamilyTree extends FamilyTreeNode {
 	
 	@Override
 	public String toString() {
-		return familyTreeTitle;
+		return "TITLE=" + familyTreeTitle;
 	}
 	
 }
