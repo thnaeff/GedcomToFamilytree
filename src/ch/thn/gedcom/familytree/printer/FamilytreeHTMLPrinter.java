@@ -151,7 +151,7 @@ public class FamilytreeHTMLPrinter
 		}
 
 		if (family != null) {
-			StringBuilder relationship = printBuilder.getRelationship(family, String.valueOf((char)0x26AD), String.valueOf((char)0x26AE), String.valueOf((char)0x26AF), "", " ");
+			StringBuilder relationship = printBuilder.getRelationship(family, String.valueOf((char)0x26AD), String.valueOf((char)0x26AE), /*String.valueOf((char)0x26AF)*/"", "", " ");
 			
 			if (relationship.length() > 0) {
 				//Look for the relationship character and add the title

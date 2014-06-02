@@ -136,7 +136,7 @@ public class FamilytreeCSVPrinter
 		values.add(printBuilder.getGender(indi, "M", "F", "", "").toString());
 		
 		if (family != null) {
-			values.add(printBuilder.getRelationship(family, "married", "divorced", "unmarried", "", "").toString());
+			values.add(printBuilder.getRelationship(family, "married", "divorced", /*"unmarried"*/"", "", "").toString());
 		} else {
 			//Empty placeholder for relationship
 			values.add("");

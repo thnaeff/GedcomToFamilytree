@@ -140,7 +140,7 @@ public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<Gedco
 		values.add(printBuilder.getGender(indi, String.valueOf((char)0x2642), String.valueOf((char)0x2640), "", "").toString());
 		
 		if (family != null) {
-			values.add(printBuilder.getRelationship(family, String.valueOf((char)0x26AD), String.valueOf((char)0x26AE), String.valueOf((char)0x26AF), "", "").toString());
+			values.add(printBuilder.getRelationship(family, String.valueOf((char)0x26AD), String.valueOf((char)0x26AE), /*String.valueOf((char)0x26AF)*/"", "", "").toString());
 		}
 		
 		values.add(printBuilder.getFirstName(indi, "", "").toString());
