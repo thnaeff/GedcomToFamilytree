@@ -17,7 +17,9 @@
 package ch.thn.gedcom.familytree.printer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import ch.thn.gedcom.creator.structures.GedcomFamily;
 import ch.thn.gedcom.creator.structures.GedcomIndividual;
@@ -25,8 +27,7 @@ import ch.thn.gedcom.familytree.FamilyTree;
 import ch.thn.gedcom.familytree.FamilyTreeNode;
 import ch.thn.gedcom.familytree.GedcomToFamilyTree;
 import ch.thn.util.tree.onoff.OnOffTreeUtil;
-import ch.thn.util.tree.printer.text.GenericLeftRightTextTreePrinter;
-import ch.thn.util.tree.printer.text.TextTreePrinterLines;
+import ch.thn.util.tree.printer.TreeNodePlainTextPrinter;
 
 /**
  * 
@@ -34,14 +35,14 @@ import ch.thn.util.tree.printer.text.TextTreePrinterLines;
  * @author Thomas Naeff (github.com/thnaeff)
  *
  */
-public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<GedcomIndividual[], FamilyTreeNode> implements FamilytreePrinter {	
-	
+public class FamilytreeTextPrinter extends TreeNodePlainTextPrinter<FamilyTreeNode> implements FamilytreePrinter {
+
 	private FamilyTreePrintBuilder printBuilder = null;
-	
+
 	private GedcomToFamilyTree toFamilyTree = null;
-	
+
 	boolean addNodeSpace = false;
-	
+
 	/**
 	 * 
 	 * 
@@ -60,34 +61,34 @@ public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<Gedco
 	 * @param showDivorcedPartnerWithoutChildren
 	 * @param showDivorcedPartnerWithChildren
 	 */
-	public FamilytreeTextPrinter(boolean addNodeSpace, boolean showId, 
-			boolean showGender, boolean showRelationship, boolean showEmail, 
-			boolean showAddress, boolean showAgeForDead, boolean showBirthDate, 
-			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName, 
+	public FamilytreeTextPrinter(boolean addNodeSpace, boolean showId,
+			boolean showGender, boolean showRelationship, boolean showEmail,
+			boolean showAddress, boolean showAgeForDead, boolean showBirthDate,
+			boolean showDeathDate, boolean showFirstName, boolean showMaidenName, boolean showMarriedName,
 			boolean showDivorcedPartnerWithoutChildren, boolean showDivorcedPartnerWithChildren) {
-		super(LeftRightTextPrinterMode.STANDARD_CONNECTTOFIRST);
-		
+		super();
+
 		this.addNodeSpace = addNodeSpace;
-		
-		printBuilder = new FamilyTreePrintBuilder(showId, showGender, 
-				showRelationship, showEmail, showAddress, showAgeForDead, 
-				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName, 
+
+		printBuilder = new FamilyTreePrintBuilder(showId, showGender,
+				showRelationship, showEmail, showAddress, showAgeForDead,
+				showBirthDate, showDeathDate, showFirstName, showMaidenName, showMarriedName,
 				showDivorcedPartnerWithoutChildren, showDivorcedPartnerWithChildren);
-		
+
 	}
-	
+
 	@Override
 	public StringBuilder print(FamilyTreeNode printNode) {
 		throw new UnsupportedOperationException("The method print(FamilyTreeNode) is not supported. " +
 				"Use print(GedcomToFamilyTree) instead.");
 	}
-	
+
 	@Override
 	public StringBuilder print(GedcomToFamilyTree toFamilyTree) {
 		this.toFamilyTree = toFamilyTree;
-		
+
 		LinkedList<FamilyTreeNode> trees = OnOffTreeUtil.convertToSimpleTree((FamilyTreeNode)toFamilyTree.getFamilyTree(), true, true);
-		
+
 		StringBuilder sb = new StringBuilder();
 		for (FamilyTreeNode tree : trees) {
 			if (sb.length() > 0) {
@@ -96,58 +97,67 @@ public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<Gedco
 			}
 			sb.append(super.print(tree));
 		}
-		
+
 		return sb;
 	}
-	
-	
+
+
 	@Override
-	protected TextTreePrinterLines getNodeData(FamilyTreeNode node) {
-		
+	protected Collection<String> getNodeValues(FamilyTreeNode node) {
+		List<String> lines = new ArrayList<>();
+
 		if (node instanceof FamilyTree) {
-			TextTreePrinterLines lines = new TextTreePrinterLines(false, false, null, "");
 			//Only the title
-			lines.addNewLine(((FamilyTree)node).getFamilyTreeTitle());
+			lines.add(((FamilyTree)node).getFamilyTreeTitle());
 			return lines;
 		}
-		
+
 		GedcomIndividual[] individuals = node.getNodeValue();
-		
-		return printBuilder.createNodeValueLines(individuals[0], individuals[1], 
-				toFamilyTree.getStorage().getFamilyOfParents(individuals[0], individuals[1]), 
+
+		List<List<String>> nodeValueLines = printBuilder.createNodeValueLines(individuals[0], individuals[1],
+				toFamilyTree.getStorage().getFamilyOfParents(individuals[0], individuals[1]),
 				this, addNodeSpace, false);
-	
+
+		for (List<String> valueLines : nodeValueLines) {
+			if (valueLines == null) {
+				continue;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			for (String value : valueLines) {
+				if (value == null) {
+					continue;
+				}
+
+				sb.append(value);
+				sb.append(" ");
+			}
+
+			lines.add(sb.toString());
+
+		}
+
+		return lines;
 	}
-	
-	
+
 	@Override
-	protected void preProcessing(TextTreePrinterLines nodeData,
-			FamilyTreeNode nextNode) {
-	}
-	
-	@Override
-	protected void postProcessing(TextTreePrinterLines nodeData,
-			FamilyTreeNode printedNode) {
-	}
-	
-	@Override
-	public ArrayList<String> createPrimaryLine(GedcomIndividual indi, 
+	public ArrayList<String> createPrimaryLine(GedcomIndividual indi,
 			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		ArrayList<String> values = new ArrayList<String>(7);
-		
+
 		values.add(printBuilder.getId(indi, "", "").toString());
-		
+
 		values.add(printBuilder.getGender(indi, String.valueOf((char)0x2642), String.valueOf((char)0x2640), "", "").toString());
-		
+
 		if (family != null) {
 			values.add(printBuilder.getRelationship(family, String.valueOf((char)0x26AD), String.valueOf((char)0x26AE), /*String.valueOf((char)0x26AF)*/"", "", "").toString());
 		}
-		
+
 		values.add(printBuilder.getFirstName(indi, "", "").toString());
-		
+
 		String married = printBuilder.getMarriedName(indi, family, "", "", true).toString();
 		String maiden = printBuilder.getMaidenName(indi, "", "", true).toString();
-		
+
 		if (!printBuilder.showMarriedName()) {
 			if (maiden.length() > 0) {
 				//Clear the married name only if there is a maiden name
@@ -160,9 +170,9 @@ public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<Gedco
 				maiden = "";
 			}
 		}
-		
+
 		values.add(married);
-		
+
 		if (married.length() == 0) {
 			//If there is no married name, use the last name
 			values.add(maiden);
@@ -172,76 +182,76 @@ public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<Gedco
 				values.add("(" + maiden + ")");
 			}
 		}
-		
+
 		StringBuilder birthDate = printBuilder.getBirthDate(indi, String.valueOf((char)0x274A), "");
 		StringBuilder sbLifespan = new StringBuilder();
-		
+
 		if (birthDate.length() > 0) {
 			StringBuilder deathDate = printBuilder.getDeathDate(indi, String.valueOf((char)0x271D), "");
-			
+
 			sbLifespan.append("[");
 			sbLifespan.append(birthDate);
-		
+
 			if (deathDate.length() > 0) {
 				sbLifespan.append(" - ");
 				sbLifespan.append(deathDate);
-				
+
 				sbLifespan.append(printBuilder.getAge(indi, " | ", "").toString());
 			}
-			
+
 			sbLifespan.append("]");
 		}
 		values.add(sbLifespan.toString());
-		
+
 		return values;
 	}
-	
+
 	@Override
-	public ArrayList<String> createAdditionalLine(GedcomIndividual indi, 
+	public ArrayList<String> createAdditionalLine(GedcomIndividual indi,
 			GedcomIndividual partner, GedcomFamily family, boolean isPartner) {
 		ArrayList<String> values = new ArrayList<String>(3);
-		
+
 		//A little space in front of the additional line
-		values.add(createColumnString(printBuilder.getId((isPartner ? partner : indi), "", "").length(), " "));
-		
+		values.add(FamilyTreePrinterUtil.createColumnString(printBuilder.getId(isPartner ? partner : indi, "", "").length(), " "));
+
 		if (isPartner) {
 			//Extra space for partners on additional lines
 			values.add(" ");
 		}
-		
+
 		StringBuilder email = printBuilder.getEmail(indi, (char)0x2709 + " ", "");
 		StringBuilder address = null;
-		
+
 		boolean empty = true;
 		boolean withAddress = true;
-		
+
 		//Do not show the address here if both have the same address
-		if ((indi == null || partner == null) 
-				|| (indi.getAddress(0) != null && partner.getAddress(0) != null 
-					&& indi.getAddress(0).equals(partner.getAddress(0)))) {
+		if (indi == null || partner == null
+				|| indi.getAddress(0) != null && partner.getAddress(0) != null
+				&& indi.getAddress(0).equals(partner.getAddress(0))) {
 			withAddress = false;
 		}
-		
+
 		if (withAddress) {
-			//Hint: When using the bullet point (0x2981) as prefix, the very 
-			//last line in the tree appears too far to the left. It seems like that 
-			//the spaces in front of the bullet point are smaller than regular spaces. 
-			//This only happens to the last line because it only happens if there is 
+			//Hint: When using the bullet point (0x2981) as prefix, the very
+			//last line in the tree appears too far to the left. It seems like that
+			//the spaces in front of the bullet point are smaller than regular spaces.
+			//This only happens to the last line because it only happens if there is
 			//no character in front of the bullet point
 			//It happens in the Eclipse Console output and gedit
 			address = printBuilder.getAddress(indi, (char)0x25AA + " ", "");
 		}
-		
-		if (email.length() > 0 || (withAddress && address.length() > 0)) {
+
+		if (email.length() > 0 || withAddress && address.length() > 0) {
 			values.add(email.toString());
 			empty = false;
-			
+
 			if (withAddress) {
 				values.add(address.toString());
 			}
 		}
-		
-		
+
+
 		if (empty) {
 			//Do not print empty lines
 			return null;
@@ -249,19 +259,6 @@ public class FamilytreeTextPrinter extends GenericLeftRightTextTreePrinter<Gedco
 			return values;
 		}
 	}
-	
-	
-	@Override
-	protected String appendValue(TextTreePrinterLines lines, int valueIndex,
-			int lineIndex) {
-		String value = lines.getValue(lineIndex, valueIndex);
-		
-		if (value != null && value.length() > 0) {
-			return value + FamilyTreePrintBuilder.SPACE;
-		}
-		
-		return "";
-	}
-	
-	
+
+
 }
